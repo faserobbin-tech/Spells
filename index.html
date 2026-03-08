@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grimoire — Заклинания D&D 2024</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0b08;
+    --surface: #141210;
+    --surface2: #1c1915;
+    --surface3: #252118;
+    --gold: #c9a84c;
+    --gold2: #e8c96b;
+    --gold3: #f5e0a0;
+    --red: #a83232;
+    --red2: #c44040;
+    --text: #e8dcc8;
+    --text2: #b0a08a;
+    --text3: #7a6e5e;
+    --border: #2e2820;
+    --border2: #3e3428;
+    --glow: rgba(201,168,76,0.15);
+    --slot-available: #c9a84c;
+    --slot-used: #3e3428;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(120,60,20,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(60,40,100,0.06) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, #0d0b08 0%, rgba(13,11,8,0.97) 100%);
+    border-bottom: 1px solid var(--border2);
+    padding: 0 24px;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 0;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .logo-title {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--gold2);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+    margin-top: 2px;
+  }
+
+  .divider-v {
+    width: 1px;
+    height: 40px;
+    background: var(--border2);
+    flex-shrink: 0;
+  }
+
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    pointer-events: none;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    padding: 9px 12px 9px 38px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #search:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--glow);
+  }
+
+  #search::placeholder { color: var(--text3); }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--border2);
+    color: var(--text2);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--gold);
+    color: var(--gold2);
+  }
+
+  .btn-gold {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #0d0b08;
+    font-weight: 700;
+  }
+
+  .btn-gold:hover {
+    background: var(--gold2);
+    border-color: var(--gold2);
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-tab:hover { color: var(--text2); }
+
+  .nav-tab.active {
+    color: var(--gold2);
+    border-bottom-color: var(--gold);
+  }
+
+  /* FILTERS */
+  .filters-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text3);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .chip:hover { border-color: var(--gold); color: var(--text2); }
+
+  .chip.active {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--gold);
+    color: var(--gold2);
+  }
+
+  /* LAYOUT */
+  .layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 0;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* SPELL LIST */
+  .spell-list-wrap {
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+  }
+
+  .spell-count {
+    padding: 12px 20px 8px;
+    font-size: 13px;
+    color: var(--text3);
+    font-style: italic;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .level-group { }
+
+  .level-header {
+    padding: 10px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  .spell-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    gap: 12px;
+  }
+
+  .spell-item:hover { background: var(--surface2); }
+  .spell-item.active { background: rgba(201,168,76,0.08); border-left: 3px solid var(--gold); }
+  .spell-item.in-book { }
+  .spell-item.in-book .spell-name { color: var(--gold3); }
+
+  .spell-level-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 1px solid var(--border2);
+    color: var(--text3);
+  }
+
+  .spell-level-badge.cantrip {
+    background: rgba(100,80,160,0.2);
+    border-color: rgba(120,80,180,0.4);
+    color: #a080cc;
+    font-size: 9px;
+    letter-spacing: 0px;
+  }
+
+  .spell-info { flex: 1; min-width: 0; }
+
+  .spell-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .spell-name-en {
+    font-size: 12px;
+    color: var(--text3);
+    font-style: italic;
+    margin-top: 1px;
+  }
+
+  .spell-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 3px;
+    background: var(--surface3);
+    color: var(--text3);
+    border: 1px solid var(--border);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px;
+  }
+
+  .tag.school-evocation { border-color: rgba(180,60,60,0.4); color: #c06060; background: rgba(120,30,30,0.15); }
+  .tag.school-abjuration { border-color: rgba(60,100,180,0.4); color: #6090c0; background: rgba(30,60,120,0.15); }
+  .tag.school-illusion { border-color: rgba(100,60,160,0.4); color: #9070c0; background: rgba(60,30,100,0.15); }
+  .tag.school-transmutation { border-color: rgba(60,160,80,0.4); color: #60c070; background: rgba(30,80,40,0.15); }
+  .tag.school-divination { border-color: rgba(60,160,160,0.4); color: #60c0c0; background: rgba(30,80,80,0.15); }
+  .tag.school-conjuration { border-color: rgba(160,120,40,0.4); color: #c09030; background: rgba(80,60,20,0.15); }
+  .tag.school-necromancy { border-color: rgba(80,160,80,0.4); color: #50a050; background: rgba(20,60,20,0.15); }
+  .tag.school-enchantment { border-color: rgba(200,80,160,0.4); color: #c060a0; background: rgba(100,30,70,0.15); }
+
+  .spell-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .btn-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text3);
+    transition: all 0.15s;
+    font-size: 14px;
+  }
+
+  .btn-icon:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-icon.added { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.15); }
+
+  /* DETAIL PANEL */
+  .detail-panel {
+    overflow-y: auto;
+    background: var(--surface);
+  }
+
+  .detail-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: var(--text3);
+    text-align: center;
+    gap: 12px;
+    padding: 40px;
+  }
+
+  .detail-empty svg { opacity: 0.3; }
+  .detail-empty p { font-style: italic; font-size: 14px; }
+
+  .detail-content { padding: 24px 20px; }
+
+  .detail-level-school {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .detail-level {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .detail-name {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold2);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .detail-name-en {
+    font-size: 14px;
+    color: var(--text3);
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  .detail-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold) 0%, transparent 70%);
+    margin: 16px 0;
+  }
+
+  .detail-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-item { }
+
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 3px;
+  }
+
+  .stat-value {
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .detail-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text2);
+  }
+
+  .detail-desc p { margin-bottom: 10px; }
+
+  .detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .detail-add-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--gold);
+    background: rgba(201,168,76,0.1);
+    color: var(--gold2);
+  }
+
+  .detail-add-btn:hover { background: rgba(201,168,76,0.2); }
+  .detail-add-btn.remove { border-color: var(--red2); color: var(--red2); background: rgba(168,50,50,0.1); }
+  .detail-add-btn.remove:hover { background: rgba(168,50,50,0.2); }
+
+  /* BOOK VIEW */
+  #view-book, #view-slots { display: none; }
+  #view-book.active, #view-slots.active, #view-spells.active { display: block; }
+
+  .book-wrap { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  .book-empty {
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--text3);
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .book-card {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .book-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .book-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+
+  .book-card-level {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .book-card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .book-card-en {
+    font-size: 12px;
+    color: var(--text3);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .book-card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .book-card-remove {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text3);
+    font-size: 12px;
+    transition: all 0.15s;
+  }
+
+  .book-card-remove:hover { border-color: var(--red2); color: var(--red2); }
+
+  /* SPELL SLOTS */
+  .slots-wrap { max-width: 900px; margin: 0 auto; padding: 24px; }
+
+  .slots-title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold2);
+    margin-bottom: 6px;
+  }
+
+  .slots-sub {
+    color: var(--text3);
+    font-style: italic;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .class-select-wrap {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .class-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 8px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text3);
+    transition: all 0.2s;
+  }
+
+  .class-btn:hover { border-color: var(--gold); color: var(--text2); }
+  .class-btn.active { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold2); }
+
+  .level-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .level-input-label {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--text3);
+    width: 80px;
+    letter-spacing: 1px;
+  }
+
+  .level-input {
+    width: 60px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    padding: 5px 8px;
+    text-align: center;
+    outline: none;
+  }
+
+  .level-input:focus { border-color: var(--gold); }
+
+  .slots-section { margin-top: 28px; }
+
+  .slots-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .slot-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .slot-level-name {
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .slot-level-num {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold2);
+  }
+
+  .slot-level-text {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1px;
+    font-family: 'Cinzel', serif;
+  }
+
+  .slot-circles {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .slot-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--slot-available);
+    background: rgba(201,168,76,0.2);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .slot-circle.used {
+    background: var(--slot-used);
+    border-color: var(--border2);
+  }
+
+  .slot-circle:hover { transform: scale(1.15); }
+
+  .slot-restore {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .slot-restore:hover { border-color: var(--gold); color: var(--gold2); }
+
+  .restore-all-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    border-radius: 6px;
+    border: 1px solid var(--gold);
+    background: rgba(201,168,76,0.1);
+    color: var(--gold2);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .restore-all-btn:hover { background: rgba(201,168,76,0.2); }
+
+  /* NO RESULTS */
+  .no-results {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--text3);
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .detail-panel { display: none; }
+    .detail-panel.mobile-open { display: block; position: fixed; inset: 0; z-index: 200; overflow-y: auto; }
+  }
+
+  .ornament {
+    color: var(--gold);
+    font-size: 16px;
+    opacity: 0.5;
+    margin: 0 6px;
+  }
+
+  .conc-tag {
+    font-size: 10px;
+    background: rgba(180,140,40,0.2);
+    color: var(--gold);
+    border: 1px solid rgba(180,140,40,0.3);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px;
+  }
+
+  .ritual-tag {
+    font-size: 10px;
+    background: rgba(60,100,180,0.15);
+    color: #6090c0;
+    border: 1px solid rgba(60,100,180,0.3);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-title">Grimoire</span>
+      <span class="logo-sub">D&D 2024 · Заклинания</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Поиск заклинания... (название, школа, класс)">
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="clearBook()">Очистить книгу</button>
+    </div>
+  </div>
+</header>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" data-view="spells" onclick="switchView('spells', this)">📖 Все заклинания</button>
+  <button class="nav-tab" data-view="book" onclick="switchView('book', this)">⭐ Моя книга (<span id="book-count">0</span>)</button>
+  <button class="nav-tab" data-view="slots" onclick="switchView('slots', this)">🔮 Слоты заклинаний</button>
+</div>
+
+<!-- SPELLS VIEW -->
+<div id="view-spells" class="active">
+  <div class="filters-bar">
+    <span class="filter-label">Уровень:</span>
+    <div class="filter-chips" id="level-filters">
+      <button class="chip active" data-level="all" onclick="filterLevel('all', this)">Все</button>
+      <button class="chip" data-level="0" onclick="filterLevel('0', this)">Заговоры</button>
+      <button class="chip" data-level="1" onclick="filterLevel('1', this)">1</button>
+      <button class="chip" data-level="2" onclick="filterLevel('2', this)">2</button>
+      <button class="chip" data-level="3" onclick="filterLevel('3', this)">3</button>
+      <button class="chip" data-level="4" onclick="filterLevel('4', this)">4</button>
+      <button class="chip" data-level="5" onclick="filterLevel('5', this)">5</button>
+      <button class="chip" data-level="6" onclick="filterLevel('6', this)">6</button>
+      <button class="chip" data-level="7" onclick="filterLevel('7', this)">7</button>
+      <button class="chip" data-level="8" onclick="filterLevel('8', this)">8</button>
+      <button class="chip" data-level="9" onclick="filterLevel('9', this)">9</button>
+    </div>
+    <div class="divider-v" style="height:20px"></div>
+    <span class="filter-label">Школа:</span>
+    <div class="filter-chips" id="school-filters">
+      <button class="chip active" data-school="all" onclick="filterSchool('all', this)">Все</button>
+      <button class="chip" data-school="Воплощение" onclick="filterSchool('Воплощение', this)">Воплощение</button>
+      <button class="chip" data-school="Ограждение" onclick="filterSchool('Ограждение', this)">Ограждение</button>
+      <button class="chip" data-school="Иллюзия" onclick="filterSchool('Иллюзия', this)">Иллюзия</button>
+      <button class="chip" data-school="Преобразование" onclick="filterSchool('Преобразование', this)">Преобразование</button>
+      <button class="chip" data-school="Прорицание" onclick="filterSchool('Прорицание', this)">Прорицание</button>
+      <button class="chip" data-school="Вызов" onclick="filterSchool('Вызов', this)">Вызов</button>
+      <button class="chip" data-school="Некромантия" onclick="filterSchool('Некромантия', this)">Некромантия</button>
+      <button class="chip" data-school="Очарование" onclick="filterSchool('Очарование', this)">Очарование</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="spell-list-wrap" id="spell-list">
+      <div class="spell-count" id="spell-count">Загрузка...</div>
+    </div>
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <p>Выберите заклинание<br>для просмотра описания</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOK VIEW -->
+<div id="view-book">
+  <div class="book-wrap">
+    <div id="book-content">
+      <div class="book-empty">✦ Ваша книга заклинаний пуста ✦<br><br>Добавьте заклинания из общего списка нажав на ☆</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLOTS VIEW -->
+<div id="view-slots">
+  <div class="slots-wrap">
+    <div class="slots-title">Слоты заклинаний</div>
+    <div class="slots-sub">Отслеживайте использованные и доступные слоты заклинаний</div>
+
+    <div>
+      <div class="filter-label" style="margin-bottom:12px">Класс персонажа:</div>
+      <div class="class-select-wrap" id="class-buttons">
+        <button class="class-btn active" onclick="setClass('wizard', this)">Волшебник</button>
+        <button class="class-btn" onclick="setClass('sorcerer', this)">Чародей</button>
+        <button class="class-btn" onclick="setClass('cleric', this)">Жрец</button>
+        <button class="class-btn" onclick="setClass('druid', this)">Друид</button>
+        <button class="class-btn" onclick="setClass('bard', this)">Бард</button>
+        <button class="class-btn" onclick="setClass('paladin', this)">Паладин</button>
+        <button class="class-btn" onclick="setClass('ranger', this)">Следопыт</button>
+        <button class="class-btn" onclick="setClass('warlock', this)">Колдун</button>
+      </div>
+    </div>
+
+    <div class="level-input-row">
+      <span class="filter-label">Уровень:</span>
+      <input type="number" class="level-input" id="char-level" min="1" max="20" value="5" onchange="updateSlots()">
+      <span style="color:var(--text3);font-size:14px">(1–20)</span>
+    </div>
+
+    <div class="slots-section">
+      <div class="slots-section-title">Слоты заклинаний</div>
+      <div id="slots-display"></div>
+      <button class="restore-all-btn" onclick="restoreAllSlots()">↺ Восстановить все слоты (Длинный отдых)</button>
+    </div>
+
+    <div class="slots-section" style="margin-top:32px" id="warlock-slots-section" style="display:none">
+      <div class="slots-section-title">Мистические таинства (Колдун)</div>
+      <div id="warlock-display"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// SPELL DATABASE — D&D 2024 (PHB), Russian
+// ============================================================
+const SPELLS = [
+  // ---- ЗАГОВОРЫ (0) ----
+  {id:1,level:0,name:"Брызги кислоты",en:"Acid Splash",school:"Воплощение",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы создаёте шарик кислоты, который поражает одно существо или двух существ, находящихся рядом. Цель должна пройти испытание Ловкости, иначе получит 1к6 кислотного урона. Урон увеличивается: 2к6 на 5-м уровне, 3к6 на 11-м, 4к6 на 17-м."},
+  {id:2,level:0,name:"Волшебная рука",en:"Mage Hand",school:"Вызов",castTime:"1 действие",range:"30 фт",components:"В, С",duration:"1 минута",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Парящая призрачная рука появляется в точке по вашему выбору. Рука длится всю длительность. Рука может переносить предметы весом не более 10 фунтов, открывать незапертые двери и контейнеры, вкладывать и извлекать предметы из контейнеров."},
+  {id:3,level:0,name:"Злая насмешка",en:"Vicious Mockery",school:"Очарование",castTime:"1 действие",range:"60 фт",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Бард"],desc:"Вы осыпаете существо потоком оскорблений, подкреплённых тонкой магией. Если оно вас слышит и понимает, оно должно пройти испытание Мудрости, иначе получит 1к4 психического урона и с помехой на следующий бросок атаки до конца своего следующего хода."},
+  {id:4,level:0,name:"Огненный снаряд",en:"Fire Bolt",school:"Воплощение",castTime:"1 действие",range:"120 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы бросаете шарик огня в существо или предмет в радиусе действия. Совершите дальнобойную атаку заклинанием. При попадании цель получает 1к10 огненного урона. Воспламеняемые предметы, не надетые на существо, загораются от этого заклинания."},
+  {id:5,level:0,name:"Священное пламя",en:"Sacred Flame",school:"Воплощение",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец"],desc:"Сноп лучистой энергии нисходит на существо, видимое вами в радиусе действия. Цель должна пройти испытание Ловкости, иначе получит 1к8 лучистого урона. Цель не получает преимущества от укрытия при этом испытании."},
+  {id:6,level:0,name:"Мистический заряд",en:"Eldritch Blast",school:"Воплощение",castTime:"1 действие",range:"120 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Колдун"],desc:"В существо бьёт луч трескучей тёмной энергии. Совершите дальнобойную атаку заклинанием против цели. При попадании цель получает 1к10 урона силовым полем. На более высоких уровнях создаётся несколько лучей: два на 5-м, три на 11-м, четыре на 17-м."},
+  {id:7,level:0,name:"Леденящее прикосновение",en:"Chill Touch",school:"Некромантия",castTime:"1 действие",range:"Touch",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Жрец"],desc:"Тянущая рука призрака хватает существо. Совершите дальнобойную атаку заклинанием против существа в радиусе 60 фт. При попадании цель получает 1к10 некротического урона и не может восстанавливать хиты до начала вашего следующего хода."},
+  {id:8,level:0,name:"Луч холода",en:"Ray of Frost",school:"Воплощение",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Голубовато-белый луч пронзает существо. Совершите дальнобойную атаку заклинанием. При попадании цель получает 1к8 холодного урона, а её скорость уменьшается на 10 фт до начала вашего следующего хода."},
+  {id:9,level:0,name:"Малая иллюзия",en:"Minor Illusion",school:"Иллюзия",castTime:"1 действие",range:"30 фт",components:"С, М",duration:"1 минута",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Вы создаёте звук или изображение предмета в пределах радиуса действия, которое длится весь отрезок времени. Иллюзия исчезает, если вы её отпустите. Если вы создадите звук, его громкость может быть от шёпота до крика."},
+  {id:10,level:0,name:"Погребальный звон",en:"Toll the Dead",school:"Некромантия",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Колдун","Жрец"],desc:"Вы указываете на существо, видимое в радиусе, и воздух вокруг него наполняется звоном погребального колокола. Цель должна пройти испытание Мудрости. При провале она получает 1к8 некротического урона, или 1к12, если у неё недостаёт хитов."},
+  {id:11,level:0,name:"Фокусы",en:"Prestidigitation",school:"Преобразование",castTime:"1 действие",range:"10 фт",components:"В, С",duration:"До 1 часа",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Это заклинание является образцом магических манипуляций. Вы можете сотворять небольшие магические эффекты: оставлять сенсорный эффект, зажигать или тушить свечу, создавать символ или мелкий предмет, нагревать или охлаждать пищу."},
+  {id:12,level:0,name:"Электрошок",en:"Shocking Grasp",school:"Воплощение",castTime:"1 действие",range:"Touch",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"В вашей ладони появляется молния, которая ударяет существо при касании. Совершите атаку заклинанием ближнего боя. Вы имеете преимущество, если цель носит металлические доспехи. При попадании цель получает 1к8 электрического урона и не может реагировать до начала своего следующего хода."},
+  {id:13,level:0,name:"Наставление",en:"Guidance",school:"Прорицание",castTime:"1 действие",range:"Touch",components:"В, С",duration:"1 минута",concentration:true,ritual:false,classes:["Жрец","Друид"],desc:"Вы касаетесь одного существа. До конца заклинания цель может один раз бросить к4 и добавить к результату одной проверки характеристики. Существо может бросить кость до или после совершения проверки."},
+  {id:14,level:0,name:"Сопротивление",en:"Resistance",school:"Ограждение",castTime:"1 действие",range:"Touch",components:"В, С",duration:"1 минута",concentration:true,ritual:false,classes:["Жрец","Друид"],desc:"Вы касаетесь одного существа. До конца заклинания цель может один раз бросить к4 и добавить к одному испытанию. Существо может бросить кость до или после совершения испытания."},
+  {id:15,level:0,name:"Искусство друидов",en:"Druidcraft",school:"Преобразование",castTime:"1 действие",range:"30 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Друид"],desc:"Вы хлопаете в ладони и создаёте один из следующих магических эффектов: предсказываете погоду, заставляете расцвести цветок или прорасти семя, создаёте мгновенный незначительный чувственный эффект."},
+  {id:16,level:0,name:"Чародейская вспышка",en:"Sorcerous Burst",school:"Воплощение",castTime:"1 действие",range:"120 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Чародей"],desc:"Вы выпускаете взрывной всплеск магии. Совершите дальнобойную атаку заклинанием. При попадании цель получает 1к8 урона. Выберите тип: кислота, холод, огонь, молния, яд, психическая или звуковая энергия."},
+  {id:17,level:0,name:"Слово сияния",en:"Word of Radiance",school:"Воплощение",castTime:"1 действие",range:"5 фт",components:"В, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец"],desc:"Вы произносите слово силы, и сияющий огонь опаляет всех существ в радиусе 5 фт. Каждое существо, которое вы выбираете, должно пройти испытание Телосложения, иначе получит 1к6 лучистого урона."},
+  {id:18,level:0,name:"Раскат грома",en:"Thunderclap",school:"Воплощение",castTime:"1 действие",range:"5 фт",components:"С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард","Друид"],desc:"Вы создаёте раскат громоподобной энергии. Все существа в радиусе 5 фт от вас должны пройти испытание Телосложения. При провале существо получает 1к6 звукового урона. Звук слышен на расстоянии 100 фт."},
+  {id:19,level:0,name:"Звёздный огонёк",en:"Starry Wisp",school:"Воплощение",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Бард","Друид"],desc:"Вы запускаете крошечный фрагмент звёздного света в существо или предмет в радиусе действия. Совершите дальнобойную атаку заклинанием. При попадании цель получает 1к8 лучистого урона и излучает тусклый свет в радиусе 10 фт до начала вашего следующего хода."},
+  {id:20,level:0,name:"Элементализм",en:"Elementalism",school:"Преобразование",castTime:"1 действие",range:"30 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Друид"],desc:"Вы управляете стихийными силами: раздуваете свечу, создаёте небольшой порыв ветра, зажигаете пламя в ладони, формируете куб льда или создаёте небольшой поток воды."},
+
+  // ---- УРОВЕНЬ 1 ----
+  {id:101,level:1,name:"Волшебная стрела",en:"Magic Missile",school:"Воплощение",castTime:"1 действие",range:"120 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы создаёте три светящихся дротика из магической энергии. Каждый дротик поражает существо по вашему выбору в радиусе действия. Каждый дротик причиняет 1к4+1 урона силовым полем. Дротики одновременно поражают своих жертв. На более высоких уровнях каждый дополнительный уровень слота добавляет один дротик."},
+  {id:102,level:1,name:"Волна грома",en:"Thunderwave",school:"Воплощение",castTime:"1 действие",range:"Self (15-ft cube)",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Друид","Бард"],desc:"Волна громовой силы исходит от вас. Каждое существо в кубе 15 фт, исходящем из вас, должно пройти испытание Телосложения. При провале существо получает 2к8 звукового урона и отталкивается на 10 фт. При успехе — только половину урона."},
+  {id:103,level:1,name:"Доспехи мага",en:"Mage Armor",school:"Ограждение",castTime:"1 действие",range:"Touch",components:"В, С, М",duration:"8 часов",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы касаетесь существа, не носящего доспехов, и защитная магическая сила окружает его. КД цели становится равным 13 + модификатор Ловкости. Заклинание заканчивается, если цель надевает доспехи."},
+  {id:104,level:1,name:"Усыпление",en:"Sleep",school:"Очарование",castTime:"1 действие",range:"90 фт",components:"В, С, М",duration:"1 минута",concentration:false,ritual:false,classes:["Волшебник","Чародей","Бард"],desc:"Это заклинание погружает существ в магический сон. Бросьте 5к8; итоговое число — это количество хитов существ, на которых может подействовать заклинание. Начиная с существа с наименьшим числом хитов, каждое существо, подпадающее под итог, засыпает."},
+  {id:105,level:1,name:"Обнаружение магии",en:"Detect Magic",school:"Прорицание",castTime:"1 действие",range:"Self",components:"В, С",duration:"10 минут",concentration:true,ritual:true,classes:["Волшебник","Чародей","Жрец","Друид","Бард","Паладин","Следопыт"],desc:"На время заклинания вы чувствуете присутствие магии в радиусе 30 фт. Если вы чувствуете магию, вы можете действием осмотреть её ауру и узнать школу магии."},
+  {id:106,level:1,name:"Лечение ран",en:"Cure Wounds",school:"Ограждение",castTime:"1 действие",range:"Touch",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец","Друид","Паладин","Следопыт","Бард"],desc:"Существо, которого вы касаетесь, восстанавливает количество хитов, равное 2к8 + ваш модификатор заклинательной характеристики. Это заклинание не действует на нежить и конструкты. На более высоких уровнях каждый дополнительный уровень слота увеличивает исцеление на 2к8."},
+  {id:107,level:1,name:"Лечащее слово",en:"Healing Word",school:"Ограждение",castTime:"Бонусное действие",range:"60 фт",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец","Друид","Бард"],desc:"Существо, видимое вами в радиусе действия, восстанавливает хиты, равные 2к4 + ваш модификатор заклинательной характеристики. Это заклинание не действует на нежить и конструкты."},
+  {id:108,level:1,name:"Благословение",en:"Bless",school:"Очарование",castTime:"1 действие",range:"30 фт",components:"В, С, М",duration:"1 минута",concentration:true,ritual:false,classes:["Жрец","Паладин"],desc:"Вы благословляете до трёх существ по своему выбору в радиусе действия. Всякий раз, когда цель совершает бросок атаки или испытание, она может бросить к4 и добавить результат к броску."},
+  {id:109,level:1,name:"Направляющий снаряд",en:"Guiding Bolt",school:"Воплощение",castTime:"1 действие",range:"120 фт",components:"В, С",duration:"1 раунд",concentration:false,ritual:false,classes:["Жрец"],desc:"Вспышка света устремляется к существу по вашему выбору. Совершите дальнобойную атаку заклинанием против цели. При попадании цель получает 4к6 лучистого урона, а следующий бросок атаки по этой цели до конца вашего следующего хода осуществляется с преимуществом."},
+  {id:110,level:1,name:"Щит",en:"Shield",school:"Ограждение",castTime:"Реакция",range:"Self",components:"В, С",duration:"1 раунд",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Невидимый барьер магической силы появляется и защищает вас. Вы получаете +5 к КД до начала своего следующего хода, включая атаку, спровоцировавшую реакцию."},
+  {id:111,level:1,name:"Героизм",en:"Heroism",school:"Очарование",castTime:"1 действие",range:"Touch",components:"В, С",duration:"1 минута",concentration:true,ritual:false,classes:["Паладин","Бард"],desc:"Существо добровольно принимает бесстрашный героизм. Всё время действия заклинания существо иммунно к эффекту Испуга и получает временные хиты, равные вашему модификатору заклинательной характеристики в начале каждого своего хода."},
+  {id:112,level:1,name:"Ледяной кинжал",en:"Ice Knife",school:"Вызов",castTime:"1 действие",range:"60 фт",components:"В, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Чародей","Друид","Волшебник"],desc:"Вы создаёте осколок льда и метаете его в существо в радиусе действия. Совершите дальнобойную атаку. При попадании цель получает 1к10 колющего урона. Попадёте или нет, лёд взрывается: все существа в 5 фт должны пройти испытание Ловкости или получить 2к6 холодного урона."},
+  {id:113,level:1,name:"Метка охотника",en:"Hunter's Mark",school:"Прорицание",castTime:"Бонусное действие",range:"90 фт",components:"В",duration:"Концентрация, до 1 часа",concentration:true,ritual:false,classes:["Следопыт"],desc:"Вы выбираете существо и отмечаете его как добычу. Вы наносите ему 1к6 дополнительного урона при каждом попадании оружием, а также совершаете с преимуществом проверки Восприятия и Выживания при поиске этого существа."},
+  {id:114,level:1,name:"Нанесение ран",en:"Inflict Wounds",school:"Некромантия",castTime:"1 действие",range:"Touch",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец"],desc:"Совершите атаку заклинанием ближнего боя против существа в радиусе досягаемости. При попадании цель получает 2к10 некротического урона. На более высоких уровнях каждый дополнительный уровень слота добавляет 1к10 урона."},
+  {id:115,level:1,name:"Защита от зла и добра",en:"Protection from Evil and Good",school:"Ограждение",castTime:"1 действие",range:"Touch",components:"В, С, М",duration:"Концентрация, до 10 минут",concentration:true,ritual:false,classes:["Жрец","Паладин","Волшебник","Колдун","Друид"],desc:"До конца заклинания одно существо, которого вы касаетесь, защищено от: аберраций, небожителей, элементалей, фей, исчадий и нежити. Защита даёт преимущество на испытания против этих существ."},
+  {id:116,level:1,name:"Жуткий смех Таши",en:"Tasha's Hideous Laughter",school:"Очарование",castTime:"1 действие",range:"30 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Волшебник","Бард"],desc:"Существо по вашему выбору, видимое в радиусе действия, воспринимает всё как безумно смешное и впадает в приступ неудержимого смеха. Существо должно пройти испытание Мудрости. При провале оно падает ничком, Обездвижено и Недееспособно."},
+  {id:117,level:1,name:"Доспех Агатиса",en:"Armor of Agathys",school:"Ограждение",castTime:"1 действие",range:"Self",components:"В, С, М",duration:"1 час",concentration:false,ritual:false,classes:["Колдун"],desc:"Защитная магическая сила окружает вас, явив себя призрачной изморозью. Вы получаете 5 временных хитов. Если существо поражает вас атакой ближнего боя, пока эти хиты ещё есть, оно получает 5 холодного урона."},
+  {id:118,level:1,name:"Адское возмездие",en:"Hellish Rebuke",school:"Воплощение",castTime:"Реакция",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Колдун"],desc:"Вы тычете пальцем, и существо, ранившее вас, на мгновение окутывается адским огнём. Существо должно пройти испытание Ловкости. При провале оно получает 2к10 огненного урона, при успехе — половину."},
+  {id:119,level:1,name:"Ведьмин снаряд",en:"Witch Bolt",school:"Воплощение",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Колдун","Чародей","Волшебник"],desc:"Луч синевато-белой молнии пронзает существо в радиусе действия. Совершите дальнобойную атаку заклинанием. При попадании цель получает 2к12 электрического урона. Пока заклинание длится, вы можете действием наносить 1к12 урона автоматически."},
+  {id:120,level:1,name:"Диссонирующий шёпот",en:"Dissonant Whispers",school:"Очарование",castTime:"1 действие",range:"60 фт",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Бард"],desc:"Вы шепчете мелодию, слышную только одному существу. Оно должно пройти испытание Мудрости. При провале получает 3к6 психического урона и должно использовать реакцию, чтобы убежать как можно дальше от вас."},
+
+  // ---- УРОВЕНЬ 2 ----
+  {id:201,level:2,name:"Кислотная стрела",en:"Acid Arrow",school:"Воплощение",castTime:"1 действие",range:"90 фт",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник"],desc:"Сверкающая зелёная стрела летит к цели и брызжет кислотой. Совершите дальнобойную атаку заклинанием. При попадании цель получает 4к4 кислотного урона и ещё 2к4 в конце своего следующего хода."},
+  {id:202,level:2,name:"Невидимость",en:"Invisibility",school:"Иллюзия",castTime:"1 действие",range:"Touch",components:"В, С, М",duration:"Концентрация, до 1 часа",concentration:true,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Существо, которого вы касаетесь, становится невидимым. Всё, что несёт или носит это существо, тоже становится невидимым, пока остаётся при нём. Заклинание заканчивается, если существо атакует или накладывает заклинание."},
+  {id:203,level:2,name:"Туманный шаг",en:"Misty Step",school:"Вызов",castTime:"Бонусное действие",range:"Self",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Паладин"],desc:"Окутавшись серебристым туманом, вы телепортируетесь в незанятое пространство, которое видите в радиусе 30 фт."},
+  {id:204,level:2,name:"Удар молнии",en:"Shatter",school:"Воплощение",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Внезапный и резкий звуковой удар исходит из точки по вашему выбору в радиусе действия. Каждое существо в сфере радиусом 10 фт вокруг этой точки должно пройти испытание Телосложения. При провале получает 3к8 звукового урона, при успехе — половину."},
+  {id:205,level:2,name:"Духовное оружие",en:"Spiritual Weapon",school:"Воплощение",castTime:"Бонусное действие",range:"60 фт",components:"В, С",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Жрец"],desc:"Вы создаёте призрачное оружие в незанятом пространстве, видимом вами в радиусе действия. Вы можете бонусным действием переместить оружие и атаковать им. При попадании оружие наносит 1к8+модификатор + бонус мастерства силовым полем."},
+  {id:206,level:2,name:"Удерживание существа",en:"Hold Person",school:"Очарование",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Волшебник","Чародей","Колдун","Жрец","Бард","Следопыт","Друид"],desc:"Выберите гуманоида в радиусе действия. Цель должна пройти испытание Мудрости, иначе станет Парализованной на всё время заклинания. В конце каждого своего хода цель повторяет испытание."},
+  {id:207,level:2,name:"Зона истины",en:"Zone of Truth",school:"Прорицание",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"10 минут",concentration:false,ritual:false,classes:["Жрец","Паладин","Бард"],desc:"Вы создаёте магическую зону, которая оберегает от обмана в сфере радиусом 15 фт с центром на точке по вашему выбору. Существа в этой сфере не могут лгать."},
+  {id:208,level:2,name:"Мёртвая тишина",en:"Silence",school:"Иллюзия",castTime:"1 действие",range:"120 фт",components:"В, С",duration:"Концентрация, до 10 минут",concentration:true,ritual:true,classes:["Жрец","Бард","Следопыт"],desc:"На всё время заклинания ни один звук не может исходить из сферы радиусом 20 фт с центром на точке по вашему выбору. Все существа в ней иммунны к звуковому урону и глухи. Заклинания с голосовым компонентом не работают."},
+  {id:209,level:2,name:"Цепи молний",en:"Spike Growth",school:"Преобразование",castTime:"1 действие",range:"150 фт",components:"В, С, М",duration:"Концентрация, до 10 минут",concentration:true,ritual:false,classes:["Друид","Следопыт"],desc:"Земля в сфере радиусом 20 фт с центром на точке, видимой в радиусе действия, покрывается острыми шипами. Зона опасной местности. Каждое существо, входящее в зону или передвигающееся по ней, получает 2к4 колющего урона за каждые 5 фт."},
+  {id:210,level:2,name:"Паутина",en:"Web",school:"Вызов",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Концентрация, до 1 часа",concentration:true,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы заполняете куб 20 фт паутиной. Паутина является трудной местностью и слабо освещает территорию. Каждое существо в паутине при её появлении должно пройти испытание Ловкости, иначе станет Опутанным."},
+
+  // ---- УРОВЕНЬ 3 ----
+  {id:301,level:3,name:"Шаровая молния",en:"Lightning Bolt",school:"Воплощение",castTime:"1 действие",range:"Self (100-ft line)",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Разряд молнии образует линию длиной 100 фт и шириной 5 фт, исходящую из вас. Каждое существо в линии должно пройти испытание Ловкости. При провале получает 8к6 электрического урона, при успехе — половину."},
+  {id:302,level:3,name:"Огненный шар",en:"Fireball",school:"Воплощение",castTime:"1 действие",range:"150 фт",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Яркая полоса пламени вырывается из вашего пальца в точку, которую вы выбираете в радиусе действия, и взрывается в шар огня. Каждое существо в сфере радиусом 20 фт должно пройти испытание Ловкости. При провале существо получает 8к6 огненного урона, при успехе — половину."},
+  {id:303,level:3,name:"Поглощение элементов",en:"Counterspell",school:"Ограждение",castTime:"Реакция",range:"60 фт",components:"С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун"],desc:"Вы пытаетесь прервать чужое заклинание в момент сотворения. Если это заклинание 3-го уровня или ниже, оно прерывается автоматически. Если заклинание выше 3-го уровня, совершите проверку характеристики."},
+  {id:304,level:3,name:"Удар духа",en:"Spirit Guardians",school:"Вызов",castTime:"1 действие",range:"Self (15-ft radius)",components:"В, С, М",duration:"Концентрация, до 10 минут",concentration:true,ritual:false,classes:["Жрец"],desc:"Вы призываете духов, которые роятся вокруг вас. Они могут быть добросердечными или злобными. Пока заклинание длится, область в радиусе 15 фт от вас является трудной местностью. Враги, входящие в неё или начинающие ход там, получают 3к8 лучистого или некротического урона."},
+  {id:305,level:3,name:"Мерцающий шаг",en:"Blink",school:"Преобразование",castTime:"1 действие",range:"Self",components:"В, С",duration:"1 минута",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Бросьте к20 в конце каждого своего хода. При результате 11+ вы исчезаете из своего текущего плана в эфир. В начале следующего хода вы появляетесь в незанятом пространстве в 10 фт от места, где исчезли."},
+  {id:306,level:3,name:"Полёт",en:"Fly",school:"Преобразование",castTime:"1 действие",range:"Touch",components:"В, С, М",duration:"Концентрация, до 10 минут",concentration:true,ritual:false,classes:["Волшебник","Чародей","Колдун"],desc:"Вы касаетесь существа. Цель получает скорость полёта 60 фт на всё время заклинания. Когда заклинание заканчивается, цель падает, если летела."},
+  {id:307,level:3,name:"Ускорение",en:"Haste",school:"Преобразование",castTime:"1 действие",range:"30 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Волшебник","Чародей"],desc:"Выберите существо в радиусе действия. Скорость цели удваивается, она получает +2 к КД и преимущество на испытания Ловкости, а также дополнительное действие в каждый свой ход."},
+  {id:308,level:3,name:"Маяк надежды",en:"Beacon of Hope",school:"Ограждение",castTime:"1 действие",range:"30 фт",components:"В, С",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Жрец"],desc:"Это заклинание даёт надежду и жизнеспособность. Выберите до трёх существ в радиусе действия. Они получают преимущество на испытания Мудрости и испытания смерти, и все исцеляющие эффекты оказывают на них максимальное действие."},
+  {id:309,level:3,name:"Тёмный клинок",en:"Hunger of Hadar",school:"Вызов",castTime:"1 действие",range:"150 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Колдун"],desc:"Вы открываете врата в пространство между планами — тёмную местность, населённую неизвестными ужасами. Тёмная сфера радиусом 20 фт наполняется шёпотом и хлюпаньем. Существа внутри слепы и испытывают холодный урон."},
+  {id:310,level:3,name:"Призыв существа",en:"Conjure Animals",school:"Вызов",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Концентрация, до 1 часа",concentration:true,ritual:false,classes:["Друид","Следопыт"],desc:"Вы призываете феерических духов, принимающих форму зверей. Выберите одного из доступных вариантов: одно существо с КО 2 или меньше, двух существ с КО 1 или меньше, четырёх существ с КО 1/2 или меньше."},
+
+  // ---- УРОВЕНЬ 4 ----
+  {id:401,level:4,name:"Огненный щит",en:"Fire Shield",school:"Воплощение",castTime:"1 действие",range:"Self",components:"В, С, М",duration:"10 минут",concentration:false,ritual:false,classes:["Волшебник"],desc:"Тонкие нити огня или льда покрывают ваше тело. Щит наносит 2к8 огненного или холодного урона существам, ударившим вас в ближнем бою. Вы получаете сопротивление огненному или холодному урону."},
+  {id:402,level:4,name:"Изгнание",en:"Banishment",school:"Ограждение",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Жрец","Паладин","Волшебник","Чародей","Колдун"],desc:"Вы пытаетесь отправить одно существо, видимое в радиусе действия, на другой план. Оно должно пройти испытание Харизмы. При провале оно перемещается на безвредный демиплан на всё время действия заклинания."},
+  {id:403,level:4,name:"Великая невидимость",en:"Greater Invisibility",school:"Иллюзия",castTime:"1 действие",range:"Touch",components:"В, С",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Волшебник","Чародей","Бард"],desc:"Вы или существо, которого вы касаетесь, становитесь невидимым до конца заклинания. Всё, что несёт или носит цель, тоже становится невидимым. В отличие от обычной невидимости, заклинание не прерывается от атак."},
+  {id:404,level:4,name:"Полиморф",en:"Polymorph",school:"Преобразование",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Концентрация, до 1 часа",concentration:true,ritual:false,classes:["Волшебник","Чародей","Друид","Бард"],desc:"Это заклинание преобразует существо, которое вы видите в радиусе действия. Нежелающая цель должна пройти испытание Мудрости. Существо принимает форму нового зверя, хиты которого не превышают его максимальных хитов в новой форме."},
+  {id:405,level:4,name:"Защита от смерти",en:"Death Ward",school:"Ограждение",castTime:"1 действие",range:"Touch",components:"В, С",duration:"8 часов",concentration:false,ritual:false,classes:["Жрец","Паладин"],desc:"Вы касаетесь существа и даруете ему определённую защиту от смерти. Первый раз, когда хиты цели опустятся до 0, они вместо этого упадут до 1. Заклинание расходуется, когда срабатывает."},
+  {id:406,level:4,name:"Призыв элементаля",en:"Conjure Minor Elementals",school:"Вызов",castTime:"1 минута",range:"90 фт",components:"В, С",duration:"Концентрация, до 1 часа",concentration:true,ritual:false,classes:["Волшебник","Друид"],desc:"Вы призываете элементалей, которые появляются в незанятых пространствах, видимых вами в радиусе действия. Выберите количество и тип призываемых существ."},
+  {id:407,level:4,name:"Оракул",en:"Arcane Eye",school:"Прорицание",castTime:"1 действие",range:"30 фт",components:"В, С, М",duration:"Концентрация, до 1 часа",concentration:true,ritual:false,classes:["Волшебник"],desc:"Вы создаёте невидимый магический глаз в пространстве в радиусе действия. Глаз способен видеть в пределах 30 фт обычным зрением и в темноте. Вы можете бонусным действием переместить глаз на 30 фт."},
+
+  // ---- УРОВЕНЬ 5 ----
+  {id:501,level:5,name:"Огненный удар",en:"Flame Strike",school:"Воплощение",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец"],desc:"Колонна священного огня спускается с небес в точку, которую вы выбираете. Каждое существо в цилиндре радиусом 10 фт и высотой 40 фт должно пройти испытание Ловкости. При провале существо получает 4к6 огненного и 4к6 лучистого урона."},
+  {id:502,level:5,name:"Телепортационный круг",en:"Teleportation Circle",school:"Вызов",castTime:"1 минута",range:"10 фт",components:"В, М",duration:"1 раунд",concentration:false,ritual:false,classes:["Волшебник","Чародей","Бард"],desc:"Пока вы произносите заклинание, вы чертите круг на полу диаметром 10 фт. Вы можете выбрать известный постоянный телепортационный круг. Все, кто входят в круг, немедленно появляются у выбранного вами пункта назначения."},
+  {id:503,level:5,name:"Стена силы",en:"Wall of Force",school:"Воплощение",castTime:"1 действие",range:"120 фт",components:"В, С, М",duration:"Концентрация, до 10 минут",concentration:true,ritual:false,classes:["Волшебник"],desc:"Невидимая стена из силовых полей появляется в точке, выбранной вами в радиусе действия. Стена бессмертна и иммунна к любому урону. Ничто не может пройти сквозь стену. Она не пропускает даже телепортацию."},
+  {id:504,level:5,name:"Легенда",en:"Legend Lore",school:"Прорицание",castTime:"10 минут",range:"Self",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Бард","Жрец"],desc:"Называете или описываете человека, место или предмет. Магия рассказывает вам всё, что помнят легенды об упомянутом субъекте. Информация может быть неточной или неполной, если предмет неизвестен."},
+  {id:505,level:5,name:"Массовое лечение ран",en:"Mass Cure Wounds",school:"Ограждение",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец","Друид","Бард"],desc:"Волна целительной энергии исходит из точки по вашему выбору в радиусе действия. Выберите до шести существ в сфере радиусом 30 фт от этой точки. Каждое из них восстанавливает хиты, равные 3к8 + модификатор."},
+  {id:506,level:5,name:"Удерживание чудовища",en:"Hold Monster",school:"Очарование",castTime:"1 действие",range:"90 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Выберите существо, видимое в радиусе действия. Оно должно пройти испытание Мудрости, иначе Парализуется на всё время заклинания. В конце каждого своего хода существо повторяет испытание."},
+  {id:507,level:5,name:"Облако смерти",en:"Cloudkill",school:"Вызов",castTime:"1 действие",range:"120 фт",components:"В, С",duration:"Концентрация, до 10 минут",concentration:true,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы создаёте сферу ядовитого, жёлто-зелёного тумана радиусом 20 фт. Туман огибает углы. Сфера является трудной местностью. Существо, начинающее ход в тумане, должно пройти испытание Телосложения или получить 5к8 ядовитого урона."},
+
+  // ---- УРОВЕНЬ 6 ----
+  {id:601,level:6,name:"Цепная молния",en:"Chain Lightning",school:"Воплощение",castTime:"1 действие",range:"150 фт",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы создаёте разряд молнии, который бьёт в цель, видимую в радиусе действия, а затем прыгает на другие цели. Первичная цель получает 10к8 электрического урона при провале испытания Ловкости. До 3 дополнительных целей поблизости получают 10к8 урона каждая."},
+  {id:602,level:6,name:"Прикосновение смерти",en:"Harm",school:"Некромантия",castTime:"1 действие",range:"60 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец"],desc:"Вы обрушиваете болезнь на существо, видимое в радиусе действия. Цель должна пройти испытание Телосложения. При провале получает 14к6 некротического урона. Максимум хитов цели уменьшается на количество нанесённого некротического урона до длинного отдыха."},
+  {id:603,level:6,name:"Истинное зрение",en:"True Seeing",school:"Прорицание",castTime:"1 действие",range:"Touch",components:"В, С, М",duration:"1 час",concentration:false,ritual:false,classes:["Волшебник","Жрец","Колдун","Бард"],desc:"Вы даруете существу, которого касаетесь, истинное зрение: способность видеть сквозь иллюзии, видеть невидимых существ, видеть в темноте на 120 фт, видеть в эфир."},
+  {id:604,level:6,name:"Дезинтеграция",en:"Disintegrate",school:"Преобразование",castTime:"1 действие",range:"60 фт",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Тонкий зелёный луч вырывается из вашего указательного пальца к цели. Цель должна пройти испытание Ловкости. При провале получает 10к6+40 силового урона. Если урон уменьшает цель до 0 хитов, она полностью дезинтегрируется."},
+
+  // ---- УРОВЕНЬ 7 ----
+  {id:701,level:7,name:"Огненный шторм",en:"Fire Storm",school:"Воплощение",castTime:"1 действие",range:"150 фт",components:"В, С",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец","Чародей","Друид"],desc:"Буря листов огня вырывается из-под земли. Область состоит из десяти кубов 10 фт, которые вы можете расставить по своему желанию. Каждое существо в области должно пройти испытание Ловкости и получает 7к10 огненного урона при провале."},
+  {id:702,level:7,name:"Телепортация",en:"Teleport",school:"Вызов",castTime:"1 действие",range:"10 фт",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Бард"],desc:"Это заклинание мгновенно переносит вас и до восьми добровольных существ, которых вы выбираете в радиусе действия, на место назначения по вашему выбору. Точность определяется знакомостью с местом."},
+  {id:703,level:7,name:"Планарный союз",en:"Plane Shift",school:"Вызов",castTime:"1 действие",range:"Touch",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Жрец","Колдун","Друид"],desc:"Вы и до восьми существ, держащихся за руки в цепочке, телепортируетесь на другой план. Либо вы можете использовать заклинание как атаку — толкнуть существо на другой план."},
+
+  // ---- УРОВЕНЬ 8 ----
+  {id:801,level:8,name:"Землетрясение",en:"Earthquake",school:"Воплощение",castTime:"1 действие",range:"500 фт",components:"В, С, М",duration:"Концентрация, до 1 минуты",concentration:true,ritual:false,classes:["Жрец","Чародей","Друид"],desc:"Вы создаёте мощный сейсмический толчок в точке, видимой в радиусе. Весь земной покров в области сотрясается. Все существа в области должны пройти испытания Телосложения, здания получают структурный урон."},
+  {id:802,level:8,name:"Контроль погоды",en:"Control Weather",school:"Преобразование",castTime:"10 минут",range:"Self (5-mile radius)",components:"В, С, М",duration:"Концентрация, до 8 часов",concentration:true,ritual:false,classes:["Волшебник","Жрец","Друид"],desc:"Вы управляете погодой в радиусе 5 миль от вас: облачностью, силой ветра и осадками. Изменение погоды происходит постепенно."},
+  {id:803,level:8,name:"Слово силы: оглушение",en:"Power Word Stun",school:"Очарование",castTime:"1 действие",range:"60 фт",components:"В",duration:"Varies",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Вы произносите слово силы, которое ошеломляет одно существо, видимое в радиусе действия, наполняя его разум болью. Если у цели не более 150 хитов, она Ошеломлена. В конце каждого своего хода цель повторяет испытание Телосложения."},
+
+  // ---- УРОВЕНЬ 9 ----
+  {id:901,level:9,name:"Желание",en:"Wish",school:"Вызов",castTime:"1 действие",range:"Self",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Желание — самое мощное заклинание, доступное смертным существам. Просто произнеся вслух, что вы желаете, вы можете изменить саму основу реальности. Наиболее безопасное применение — дублировать любое другое заклинание 8-го уровня или ниже."},
+  {id:902,level:9,name:"Астральная проекция",en:"Astral Projection",school:"Некромантия",castTime:"1 час",range:"10 фт",components:"В, С, М",duration:"Особая",concentration:false,ritual:false,classes:["Волшебник","Жрец","Колдун","Монах"],desc:"Вы и до восьми добровольных существ в радиусе действия проецируете свои астральные тела в Астральный план. Физическое тело остаётся в состоянии подвешенной анимации до конца заклинания."},
+  {id:903,level:9,name:"Слово силы: убийство",en:"Power Word Kill",school:"Очарование",castTime:"1 действие",range:"60 фт",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей","Колдун","Бард"],desc:"Вы произносите слово силы, которое способно заставить одно существо умереть мгновенно. Если существо, которое вы выбираете, имеет не более 100 хитов, оно умирает. Иначе заклинание не действует."},
+  {id:904,level:9,name:"Остановка времени",en:"Time Stop",school:"Преобразование",castTime:"1 действие",range:"Self",components:"В",duration:"Мгновенно",concentration:false,ritual:false,classes:["Волшебник","Чародей"],desc:"Вы ненадолго останавливаете ток времени для всех, кроме себя. Вы бросаете 1к4+1 и получаете столько дополнительных ходов подряд. Заклинание заканчивается, если вы воздействуете на другое существо."},
+  {id:905,level:9,name:"Истинное воскрешение",en:"True Resurrection",school:"Некромантия",castTime:"1 час",range:"Touch",components:"В, С, М",duration:"Мгновенно",concentration:false,ritual:false,classes:["Жрец","Друид"],desc:"Вы касаетесь существа, умершего не более 200 лет назад, не погибшего от старости и не являющегося нежитью. Если его душа свободна и желает вернуться, существо воскресает с полными хитами."},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let filteredSpells = [...SPELLS];
+let activeLevel = 'all';
+let activeSchool = 'all';
+let searchQuery = '';
+let selectedSpell = null;
+let spellBook = JSON.parse(localStorage.getItem('dnd-spellbook') || '[]');
+let slots = JSON.parse(localStorage.getItem('dnd-slots') || 'null');
+let selectedClass = 'wizard';
+let charLevel = 5;
+
+// Slot tables per class per character level
+const SLOT_TABLES = {
+  wizard:   [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
+  sorcerer: [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
+  cleric:   [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
+  druid:    [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
+  bard:     [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
+  paladin:  [[],[2],[3],[3,2],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],[4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]],
+  ranger:   [[],[2],[3],[3,2],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],[4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]],
+  warlock:  [[1],[2],[2,0],[2,0],[2,0],[2,0],[2,0],[2,0],[2,0],[2,0],[3,0],[3,0],[3,0],[3,0],[3,0],[3,0],[4,0],[4,0],[4,0],[4,0]],
+};
+
+const LEVEL_NAMES_WARLOCK = ['1','2','3','4','5'];
+
+function getSlotTable() {
+  const table = SLOT_TABLES[selectedClass];
+  const idx = Math.min(charLevel - 1, table.length - 1);
+  return table[idx] || [];
+}
+
+function initSlots() {
+  if (!slots || slots.class !== selectedClass || slots.charLevel !== charLevel) {
+    const table = getSlotTable();
+    slots = {
+      class: selectedClass,
+      charLevel: charLevel,
+      slots: table.map(max => ({ max, used: 0 }))
+    };
+    saveSlots();
+  }
+}
+
+function saveSlots() {
+  localStorage.setItem('dnd-slots', JSON.stringify(slots));
+}
+
+function saveBook() {
+  localStorage.setItem('dnd-spellbook', JSON.stringify(spellBook));
+}
+
+// ============================================================
+// FILTER & RENDER
+// ============================================================
+function applyFilters() {
+  filteredSpells = SPELLS.filter(s => {
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q ||
+      s.name.toLowerCase().includes(q) ||
+      s.en.toLowerCase().includes(q) ||
+      s.school.toLowerCase().includes(q) ||
+      s.classes.some(c => c.toLowerCase().includes(q));
+    const matchLevel = activeLevel === 'all' || String(s.level) === activeLevel;
+    const matchSchool = activeSchool === 'all' || s.school === activeSchool;
+    return matchSearch && matchLevel && matchSchool;
+  });
+  renderSpellList();
+}
+
+function renderSpellList() {
+  const container = document.getElementById('spell-list');
+  const count = document.getElementById('spell-count');
+  count.textContent = `Найдено заклинаний: ${filteredSpells.length} из ${SPELLS.length}`;
+
+  if (filteredSpells.length === 0) {
+    container.innerHTML = `<div class="spell-count"></div><div class="no-results">✦ Заклинаний не найдено ✦</div>`;
+    return;
+  }
+
+  // Group by level
+  const grouped = {};
+  filteredSpells.forEach(s => {
+    if (!grouped[s.level]) grouped[s.level] = [];
+    grouped[s.level].push(s);
+  });
+
+  let html = `<div class="spell-count" id="spell-count">Найдено заклинаний: ${filteredSpells.length} из ${SPELLS.length}</div>`;
+
+  Object.keys(grouped).sort((a,b) => +a - +b).forEach(level => {
+    const levelName = level == 0 ? 'Заговоры' : `${level} уровень`;
+    html += `<div class="level-group">
+      <div class="level-header">✦ ${levelName}</div>`;
+    grouped[level].forEach(s => {
+      const inBook = spellBook.includes(s.id);
+      const active = selectedSpell && selectedSpell.id === s.id ? 'active' : '';
+      const schoolClass = 'school-' + schoolToEn(s.school);
+      html += `
+      <div class="spell-item ${active} ${inBook ? 'in-book' : ''}" onclick="selectSpell(${s.id})">
+        <div class="spell-level-badge ${level == 0 ? 'cantrip' : ''}">${level == 0 ? '◐' : level}</div>
+        <div class="spell-info">
+          <div class="spell-name">${s.name}</div>
+          <div class="spell-name-en">${s.en}</div>
+          <div class="spell-meta">
+            <span class="tag ${schoolClass}">${s.school}</span>
+            ${s.concentration ? '<span class="conc-tag">К</span>' : ''}
+            ${s.ritual ? '<span class="ritual-tag">Р</span>' : ''}
+            <span class="tag">${s.castTime}</span>
+          </div>
+        </div>
+        <div class="spell-actions">
+          <button class="btn-icon ${inBook ? 'added' : ''}" onclick="toggleBook(event, ${s.id})" title="${inBook ? 'Убрать из книги' : 'В книгу'}">
+            ${inBook ? '★' : '☆'}
+          </button>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function schoolToEn(school) {
+  const map = {
+    'Воплощение': 'evocation',
+    'Ограждение': 'abjuration',
+    'Иллюзия': 'illusion',
+    'Преобразование': 'transmutation',
+    'Прорицание': 'divination',
+    'Вызов': 'conjuration',
+    'Некромантия': 'necromancy',
+    'Очарование': 'enchantment',
+  };
+  return map[school] || '';
+}
+
+function selectSpell(id) {
+  selectedSpell = SPELLS.find(s => s.id === id);
+  renderSpellList();
+  renderDetail();
+}
+
+function renderDetail() {
+  const panel = document.getElementById('detail-panel');
+  if (!selectedSpell) {
+    panel.innerHTML = `<div class="detail-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <p>Выберите заклинание<br>для просмотра описания</p>
+    </div>`;
+    return;
+  }
+  const s = selectedSpell;
+  const inBook = spellBook.includes(s.id);
+  const schoolClass = 'school-' + schoolToEn(s.school);
+  const levelText = s.level === 0 ? 'Заговор' : `Заклинание ${s.level} уровня`;
+
+  panel.innerHTML = `
+    <div class="detail-content">
+      <div class="detail-level-school">
+        <span class="detail-level">${levelText}</span>
+        <span class="tag ${schoolClass}">${s.school}</span>
+        ${s.concentration ? '<span class="conc-tag">Концентрация</span>' : ''}
+        ${s.ritual ? '<span class="ritual-tag">Ритуал</span>' : ''}
+      </div>
+      <div class="detail-name">${s.name}</div>
+      <div class="detail-name-en">${s.en}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-stats">
+        <div class="stat-item">
+          <div class="stat-label">Время сотворения</div>
+          <div class="stat-value">${s.castTime}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Дистанция</div>
+          <div class="stat-value">${s.range}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Компоненты</div>
+          <div class="stat-value">${s.components}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Длительность</div>
+          <div class="stat-value">${s.duration}</div>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-desc"><p>${s.desc}</p></div>
+      <div class="detail-tags">
+        ${s.classes.map(c => `<span class="tag">${c}</span>`).join('')}
+      </div>
+      <button class="detail-add-btn ${inBook ? 'remove' : ''}" onclick="toggleBook(event, ${s.id})">
+        ${inBook ? '★ Убрать из книги' : '☆ Добавить в книгу'}
+      </button>
+    </div>`;
+}
+
+function toggleBook(e, id) {
+  e.stopPropagation();
+  if (spellBook.includes(id)) {
+    spellBook = spellBook.filter(x => x !== id);
+  } else {
+    spellBook.push(id);
+  }
+  saveBook();
+  document.getElementById('book-count').textContent = spellBook.length;
+  renderSpellList();
+  renderDetail();
+  renderBook();
+}
+
+function clearBook() {
+  if (confirm('Очистить всю книгу заклинаний?')) {
+    spellBook = [];
+    saveBook();
+    document.getElementById('book-count').textContent = 0;
+    renderSpellList();
+    renderDetail();
+    renderBook();
+  }
+}
+
+function filterLevel(level, btn) {
+  activeLevel = level;
+  document.querySelectorAll('#level-filters .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function filterSchool(school, btn) {
+  activeSchool = school;
+  document.querySelectorAll('#school-filters .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  applyFilters();
+});
+
+// ============================================================
+// VIEWS
+// ============================================================
+function switchView(view, btn) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['spells','book','slots'].forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el) el.classList.toggle('active', v === view);
+  });
+  if (view === 'book') renderBook();
+  if (view === 'slots') renderSlots();
+}
+
+// ============================================================
+// BOOK VIEW
+// ============================================================
+function renderBook() {
+  const content = document.getElementById('book-content');
+  if (spellBook.length === 0) {
+    content.innerHTML = `<div class="book-empty">✦ Ваша книга заклинаний пуста ✦<br><br>Добавьте заклинания из общего списка нажав на ☆</div>`;
+    return;
+  }
+
+  const bookSpells = SPELLS.filter(s => spellBook.includes(s.id)).sort((a,b) => a.level - b.level);
+
+  const grouped = {};
+  bookSpells.forEach(s => {
+    if (!grouped[s.level]) grouped[s.level] = [];
+    grouped[s.level].push(s);
+  });
+
+  let html = ``;
+  Object.keys(grouped).sort((a,b) => +a - +b).forEach(level => {
+    const levelName = level == 0 ? 'Заговоры' : `${level} уровень`;
+    html += `<div style="margin-bottom:24px">
+      <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">✦ ${levelName} (${grouped[level].length})</div>
+      <div class="book-grid">`;
+    grouped[level].forEach(s => {
+      const schoolClass = 'school-' + schoolToEn(s.school);
+      html += `
+        <div class="book-card" onclick="selectAndGoSpells(${s.id})">
+          <button class="book-card-remove" onclick="event.stopPropagation();toggleBook(event,${s.id})">✕</button>
+          <div class="book-card-level">${level == 0 ? 'Заговор' : level + ' уровень'}</div>
+          <div class="book-card-name">${s.name}</div>
+          <div class="book-card-en">${s.en}</div>
+          <div class="book-card-tags">
+            <span class="tag ${schoolClass}">${s.school}</span>
+            ${s.concentration ? '<span class="conc-tag">К</span>' : ''}
+            ${s.ritual ? '<span class="ritual-tag">Р</span>' : ''}
+            <span class="tag" style="font-size:11px">${s.castTime}</span>
+          </div>
+          <div style="margin-top:10px;font-size:13px;color:var(--text3);line-height:1.5;">${s.desc.substring(0,100)}...</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  content.innerHTML = html;
+}
+
+function selectAndGoSpells(id) {
+  selectSpell(id);
+  document.querySelector('[data-view="spells"]').click();
+}
+
+// ============================================================
+// SLOTS VIEW
+// ============================================================
+function setClass(cls, btn) {
+  selectedClass = cls;
+  document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  slots = null;
+  initSlots();
+  renderSlots();
+}
+
+function updateSlots() {
+  charLevel = Math.min(20, Math.max(1, parseInt(document.getElementById('char-level').value) || 1));
+  document.getElementById('char-level').value = charLevel;
+  slots = null;
+  initSlots();
+  renderSlots();
+}
+
+function renderSlots() {
+  initSlots();
+  const display = document.getElementById('slots-display');
+  if (!slots.slots || slots.slots.length === 0) {
+    display.innerHTML = `<div style="color:var(--text3);font-style:italic;padding:20px 0">На этом уровне нет слотов заклинаний.</div>`;
+    return;
+  }
+
+  const warlockMaxLevel = selectedClass === 'warlock' ? [null,null,1,2,3,4,5][Math.min(Math.ceil(charLevel/2),5)] : null;
+
+  let html = '';
+  slots.slots.forEach((slot, i) => {
+    if (slot.max === 0) return;
+    const slotLevel = i + 1;
+    let circles = '';
+    for (let j = 0; j < slot.max; j++) {
+      const used = j < slot.used;
+      circles += `<div class="slot-circle ${used ? 'used' : ''}" onclick="toggleSlot(${i}, ${j})" title="${used ? 'Восстановить' : 'Использовать'}"></div>`;
+    }
+
+    const warlockLabel = selectedClass === 'warlock' && i === 0 ? ` (до ${warlockMaxLevel} ур.)` : '';
+
+    html += `
+      <div class="slot-row">
+        <div class="slot-level-name">
+          <div class="slot-level-num">${slotLevel}</div>
+          <div class="slot-level-text">УРОВЕНЬ${warlockLabel}</div>
+        </div>
+        <div class="slot-circles">${circles}</div>
+        <div style="font-size:13px;color:var(--text3);min-width:50px;text-align:center">${slot.max - slot.used}/${slot.max}</div>
+        <button class="slot-restore" onclick="restoreSlot(${i})">↺</button>
+      </div>`;
+  });
+
+  display.innerHTML = html;
+}
+
+function toggleSlot(slotIndex, circleIndex) {
+  const slot = slots.slots[slotIndex];
+  if (circleIndex < slot.used) {
+    slot.used = Math.max(0, slot.used - 1);
+  } else {
+    slot.used = Math.min(slot.max, slot.used + 1);
+  }
+  saveSlots();
+  renderSlots();
+}
+
+function restoreSlot(slotIndex) {
+  slots.slots[slotIndex].used = 0;
+  saveSlots();
+  renderSlots();
+}
+
+function restoreAllSlots() {
+  slots.slots.forEach(s => s.used = 0);
+  saveSlots();
+  renderSlots();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById('book-count').textContent = spellBook.length;
+applyFilters();
+</script>
+</body>
+</html>
