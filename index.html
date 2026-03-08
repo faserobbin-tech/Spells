@@ -520,9 +520,9 @@
   .detail-add-btn.remove { border-color: var(--red2); color: var(--red2); background: rgba(168,50,50,0.1); }
   .detail-add-btn.remove:hover { background: rgba(168,50,50,0.2); }
 
-  /* BOOK VIEW */
-  #view-book, #view-slots { display: none; }
-  #view-book.active, #view-slots.active, #view-spells.active { display: block; }
+  /* VIEW SWITCHING */
+  .view-section { display: none; }
+  .view-section.active { display: block; }
 
   .book-wrap { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
@@ -828,12 +828,72 @@
     letter-spacing: 0.5px;
   }
 
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.15s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    max-width: 540px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.1);
+    animation: slideUp 0.15s ease;
+    position: relative;
+  }
+
+  @keyframes slideUp { from { transform: translateY(16px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+
+  .modal-close {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 16px 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+
+  .modal-close button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .modal-close button:hover { border-color: var(--red2); color: var(--red2); }
+
 </style>
 </head>
 <body>
 
+<!-- SPELL MODAL -->
+<div id="spell-modal" style="display:none"></div>
+
 <header>
-  <div class="header-inner">
     <div class="logo">
       <span class="logo-title">Grimoire</span>
       <span class="logo-sub">D&D 2024 · Заклинания</span>
@@ -856,7 +916,7 @@
 </div>
 
 <!-- SPELLS VIEW -->
-<div id="view-spells" class="active">
+<div id="view-spells" class="view-section active">
   <div class="filters-bar">
     <span class="filter-label">Уровень:</span>
     <div class="filter-chips" id="level-filters">
@@ -901,7 +961,7 @@
 </div>
 
 <!-- BOOK VIEW -->
-<div id="view-book">
+<div id="view-book" class="view-section">
   <div class="book-wrap">
     <div id="book-content">
       <div class="book-empty">✦ Ваша книга заклинаний пуста ✦<br><br>Добавьте заклинания из общего списка нажав на ☆</div>
@@ -910,41 +970,14 @@
 </div>
 
 <!-- SLOTS VIEW -->
-<div id="view-slots">
+<div id="view-slots" class="view-section">
   <div class="slots-wrap">
     <div class="slots-title">Слоты заклинаний</div>
-    <div class="slots-sub">Отслеживайте использованные и доступные слоты заклинаний</div>
+    <div class="slots-sub">Кликайте по кружкам чтобы тратить и восстанавливать слоты. Настройте количество под своего персонажа.</div>
 
-    <div>
-      <div class="filter-label" style="margin-bottom:12px">Класс персонажа:</div>
-      <div class="class-select-wrap" id="class-buttons">
-        <button class="class-btn active" onclick="setClass('wizard', this)">Волшебник</button>
-        <button class="class-btn" onclick="setClass('sorcerer', this)">Чародей</button>
-        <button class="class-btn" onclick="setClass('cleric', this)">Жрец</button>
-        <button class="class-btn" onclick="setClass('druid', this)">Друид</button>
-        <button class="class-btn" onclick="setClass('bard', this)">Бард</button>
-        <button class="class-btn" onclick="setClass('paladin', this)">Паладин</button>
-        <button class="class-btn" onclick="setClass('ranger', this)">Следопыт</button>
-        <button class="class-btn" onclick="setClass('warlock', this)">Колдун</button>
-      </div>
-    </div>
+    <div id="slots-display"></div>
 
-    <div class="level-input-row">
-      <span class="filter-label">Уровень:</span>
-      <input type="number" class="level-input" id="char-level" min="1" max="20" value="5" onchange="updateSlots()">
-      <span style="color:var(--text3);font-size:14px">(1–20)</span>
-    </div>
-
-    <div class="slots-section">
-      <div class="slots-section-title">Слоты заклинаний</div>
-      <div id="slots-display"></div>
-      <button class="restore-all-btn" onclick="restoreAllSlots()">↺ Восстановить все слоты (Длинный отдых)</button>
-    </div>
-
-    <div class="slots-section" style="margin-top:32px" id="warlock-slots-section" style="display:none">
-      <div class="slots-section-title">Мистические таинства (Колдун)</div>
-      <div id="warlock-display"></div>
-    </div>
+    <button class="restore-all-btn" onclick="restoreAllSlots()">↺ Длинный отдых — восстановить все слоты</button>
   </div>
 </div>
 
@@ -1072,45 +1105,6 @@ let activeSchool = 'all';
 let searchQuery = '';
 let selectedSpell = null;
 let spellBook = JSON.parse(localStorage.getItem('dnd-spellbook') || '[]');
-let slots = JSON.parse(localStorage.getItem('dnd-slots') || 'null');
-let selectedClass = 'wizard';
-let charLevel = 5;
-
-// Slot tables per class per character level
-const SLOT_TABLES = {
-  wizard:   [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
-  sorcerer: [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
-  cleric:   [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
-  druid:    [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
-  bard:     [[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],
-  paladin:  [[],[2],[3],[3,2],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],[4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]],
-  ranger:   [[],[2],[3],[3,2],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],[4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]],
-  warlock:  [[1],[2],[2,0],[2,0],[2,0],[2,0],[2,0],[2,0],[2,0],[2,0],[3,0],[3,0],[3,0],[3,0],[3,0],[3,0],[4,0],[4,0],[4,0],[4,0]],
-};
-
-const LEVEL_NAMES_WARLOCK = ['1','2','3','4','5'];
-
-function getSlotTable() {
-  const table = SLOT_TABLES[selectedClass];
-  const idx = Math.min(charLevel - 1, table.length - 1);
-  return table[idx] || [];
-}
-
-function initSlots() {
-  if (!slots || slots.class !== selectedClass || slots.charLevel !== charLevel) {
-    const table = getSlotTable();
-    slots = {
-      class: selectedClass,
-      charLevel: charLevel,
-      slots: table.map(max => ({ max, used: 0 }))
-    };
-    saveSlots();
-  }
-}
-
-function saveSlots() {
-  localStorage.setItem('dnd-slots', JSON.stringify(slots));
-}
 
 function saveBook() {
   localStorage.setItem('dnd-spellbook', JSON.stringify(spellBook));
@@ -1346,7 +1340,7 @@ function renderBook() {
     grouped[level].forEach(s => {
       const schoolClass = 'school-' + schoolToEn(s.school);
       html += `
-        <div class="book-card" onclick="selectAndGoSpells(${s.id})">
+        <div class="book-card" onclick="openSpellModal(${s.id})">
           <button class="book-card-remove" onclick="event.stopPropagation();toggleBook(event,${s.id})">✕</button>
           <div class="book-card-level">${level == 0 ? 'Заговор' : level + ' уровень'}</div>
           <div class="book-card-name">${s.name}</div>
@@ -1366,71 +1360,122 @@ function renderBook() {
   content.innerHTML = html;
 }
 
-function selectAndGoSpells(id) {
-  selectSpell(id);
-  document.querySelector('[data-view="spells"]').click();
+function openSpellModal(id) {
+  const s = SPELLS.find(sp => sp.id === id);
+  if (!s) return;
+  const inBook = spellBook.includes(s.id);
+  const schoolClass = 'school-' + schoolToEn(s.school);
+  const levelText = s.level === 0 ? 'Заговор' : `Заклинание ${s.level} уровня`;
+
+  const modal = document.getElementById('spell-modal');
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal(event)">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-close"><button onclick="closeSpellModal()" title="Закрыть">✕</button></div>
+        <div class="detail-content">
+          <div class="detail-level-school">
+            <span class="detail-level">${levelText}</span>
+            <span class="tag ${schoolClass}">${s.school}</span>
+            ${s.concentration ? '<span class="conc-tag">Концентрация</span>' : ''}
+            ${s.ritual ? '<span class="ritual-tag">Ритуал</span>' : ''}
+          </div>
+          <div class="detail-name">${s.name}</div>
+          <div class="detail-name-en">${s.en}</div>
+          <div class="detail-divider"></div>
+          <div class="detail-stats">
+            <div class="stat-item">
+              <div class="stat-label">Время сотворения</div>
+              <div class="stat-value">${s.castTime}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Дистанция</div>
+              <div class="stat-value">${s.range}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Компоненты</div>
+              <div class="stat-value">${s.components}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Длительность</div>
+              <div class="stat-value">${s.duration}</div>
+            </div>
+          </div>
+          <div class="detail-divider"></div>
+          <div class="detail-desc"><p>${s.desc}</p></div>
+          <div class="detail-tags">
+            ${s.classes.map(c => `<span class="tag">${c}</span>`).join('')}
+          </div>
+          <button class="detail-add-btn remove" onclick="toggleBook(event, ${s.id}); closeSpellModal()">
+            ✕ Убрать из книги
+          </button>
+        </div>
+      </div>
+    </div>`;
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === e.currentTarget) closeSpellModal();
+}
+
+function closeSpellModal() {
+  const modal = document.getElementById('spell-modal');
+  modal.style.display = 'none';
+  modal.innerHTML = '';
+  document.body.style.overflow = '';
 }
 
 // ============================================================
-// SLOTS VIEW
+// SPELL SLOTS — simple manual tracker
 // ============================================================
-function setClass(cls, btn) {
-  selectedClass = cls;
-  document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  slots = null;
-  initSlots();
-  renderSlots();
+let slotData = JSON.parse(localStorage.getItem('dnd-slots-v2') || 'null');
+if (!slotData) {
+  // Default: 9 levels, sensible starting maximums (4/3/3/3/2/1/1/1/1)
+  slotData = [4,3,3,3,2,1,1,1,1].map((max, i) => ({ level: i+1, max: i < 5 ? max : 0, used: 0 }));
+  localStorage.setItem('dnd-slots-v2', JSON.stringify(slotData));
 }
 
-function updateSlots() {
-  charLevel = Math.min(20, Math.max(1, parseInt(document.getElementById('char-level').value) || 1));
-  document.getElementById('char-level').value = charLevel;
-  slots = null;
-  initSlots();
-  renderSlots();
+function saveSlots() {
+  localStorage.setItem('dnd-slots-v2', JSON.stringify(slotData));
 }
 
 function renderSlots() {
-  initSlots();
   const display = document.getElementById('slots-display');
-  if (!slots.slots || slots.slots.length === 0) {
-    display.innerHTML = `<div style="color:var(--text3);font-style:italic;padding:20px 0">На этом уровне нет слотов заклинаний.</div>`;
-    return;
-  }
-
-  const warlockMaxLevel = selectedClass === 'warlock' ? [null,null,1,2,3,4,5][Math.min(Math.ceil(charLevel/2),5)] : null;
-
   let html = '';
-  slots.slots.forEach((slot, i) => {
-    if (slot.max === 0) return;
-    const slotLevel = i + 1;
+  slotData.forEach((slot, i) => {
     let circles = '';
-    for (let j = 0; j < slot.max; j++) {
-      const used = j < slot.used;
-      circles += `<div class="slot-circle ${used ? 'used' : ''}" onclick="toggleSlot(${i}, ${j})" title="${used ? 'Восстановить' : 'Использовать'}"></div>`;
+    if (slot.max > 0) {
+      for (let j = 0; j < slot.max; j++) {
+        const used = j < slot.used;
+        circles += `<div class="slot-circle ${used ? 'used' : ''}" onclick="clickSlotCircle(${i},${j})" title="${used ? 'Нажми чтобы восстановить' : 'Нажми чтобы использовать'}"></div>`;
+      }
+    } else {
+      circles = `<span style="color:var(--text3);font-size:13px;font-style:italic;padding:4px 0">нет слотов</span>`;
     }
-
-    const warlockLabel = selectedClass === 'warlock' && i === 0 ? ` (до ${warlockMaxLevel} ур.)` : '';
-
     html += `
-      <div class="slot-row">
-        <div class="slot-level-name">
-          <div class="slot-level-num">${slotLevel}</div>
-          <div class="slot-level-text">УРОВЕНЬ${warlockLabel}</div>
-        </div>
-        <div class="slot-circles">${circles}</div>
-        <div style="font-size:13px;color:var(--text3);min-width:50px;text-align:center">${slot.max - slot.used}/${slot.max}</div>
-        <button class="slot-restore" onclick="restoreSlot(${i})">↺</button>
-      </div>`;
+    <div class="slot-row">
+      <div class="slot-level-name">
+        <div class="slot-level-num">${slot.level}</div>
+        <div class="slot-level-text">УРОВЕНЬ</div>
+      </div>
+      <div class="slot-circles">${circles}</div>
+      <div style="font-size:14px;color:var(--text3);min-width:44px;text-align:center;font-family:'Cinzel',serif">
+        ${slot.max > 0 ? `<span style="color:${slot.used>0?'var(--red2)':'var(--gold)'}">${slot.max - slot.used}</span>/${slot.max}` : '—'}
+      </div>
+      <div style="display:flex;gap:5px;flex-shrink:0;">
+        <button class="slot-restore" onclick="adjustMax(${i},-1)" title="Уменьшить максимум">−</button>
+        <button class="slot-restore" onclick="adjustMax(${i},+1)" title="Увеличить максимум">+</button>
+        <button class="slot-restore" style="${slot.used>0?'border-color:var(--gold);color:var(--gold2)':''}" onclick="restoreSlot(${i})">↺</button>
+      </div>
+    </div>`;
   });
-
   display.innerHTML = html;
 }
 
-function toggleSlot(slotIndex, circleIndex) {
-  const slot = slots.slots[slotIndex];
-  if (circleIndex < slot.used) {
+function clickSlotCircle(slotIdx, circleIdx) {
+  const slot = slotData[slotIdx];
+  if (circleIdx < slot.used) {
     slot.used = Math.max(0, slot.used - 1);
   } else {
     slot.used = Math.min(slot.max, slot.used + 1);
@@ -1439,14 +1484,22 @@ function toggleSlot(slotIndex, circleIndex) {
   renderSlots();
 }
 
-function restoreSlot(slotIndex) {
-  slots.slots[slotIndex].used = 0;
+function adjustMax(slotIdx, delta) {
+  const slot = slotData[slotIdx];
+  slot.max = Math.max(0, Math.min(9, slot.max + delta));
+  if (slot.used > slot.max) slot.used = slot.max;
+  saveSlots();
+  renderSlots();
+}
+
+function restoreSlot(slotIdx) {
+  slotData[slotIdx].used = 0;
   saveSlots();
   renderSlots();
 }
 
 function restoreAllSlots() {
-  slots.slots.forEach(s => s.used = 0);
+  slotData.forEach(s => s.used = 0);
   saveSlots();
   renderSlots();
 }
@@ -1456,6 +1509,11 @@ function restoreAllSlots() {
 // ============================================================
 document.getElementById('book-count').textContent = spellBook.length;
 applyFilters();
+renderSlots();
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSpellModal();
+});
 </script>
 </body>
 </html>
