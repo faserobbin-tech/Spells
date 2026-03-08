@@ -828,6 +828,19 @@
     letter-spacing: 0.5px;
   }
 
+  .cf-class-chip {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    color: var(--text3);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .cf-class-chip:hover { border-color: var(--gold); color: var(--text2); }
+  .cf-class-chip.selected { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold2); }
+
   /* MODAL */
   .modal-overlay {
     position: fixed;
@@ -893,6 +906,109 @@
 <!-- SPELL MODAL -->
 <div id="spell-modal" style="display:none"></div>
 
+<!-- CUSTOM SPELL FORM MODAL -->
+<div id="custom-spell-modal" style="display:none">
+  <div class="modal-overlay" onclick="closeCustomForm(event)">
+    <div class="modal-box" onclick="event.stopPropagation()" style="max-width:600px">
+      <div class="modal-close"><button onclick="closeCustomSpellModal()" title="Закрыть">✕</button></div>
+      <div class="detail-content">
+        <div class="detail-name" style="margin-bottom:4px" id="custom-form-title">Новое заклинание</div>
+        <div class="detail-name-en" style="margin-bottom:16px">Создайте собственное заклинание</div>
+        <div class="detail-divider"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Название (рус.) *</div>
+            <input id="cf-name" type="text" placeholder="Огненный шар" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">
+          </div>
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Название (eng)</div>
+            <input id="cf-name-en" type="text" placeholder="Fireball" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">
+          </div>
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Уровень *</div>
+            <select id="cf-level" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none">
+              <option value="0">Заговор</option>
+              <option value="1">1 уровень</option>
+              <option value="2">2 уровень</option>
+              <option value="3">3 уровень</option>
+              <option value="4">4 уровень</option>
+              <option value="5">5 уровень</option>
+              <option value="6">6 уровень</option>
+              <option value="7">7 уровень</option>
+              <option value="8">8 уровень</option>
+              <option value="9">9 уровень</option>
+            </select>
+          </div>
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Школа *</div>
+            <select id="cf-school" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none">
+              <option>Воплощение</option>
+              <option>Ограждение</option>
+              <option>Иллюзия</option>
+              <option>Преобразование</option>
+              <option>Прорицание</option>
+              <option>Вызов</option>
+              <option>Некромантия</option>
+              <option>Очарование</option>
+            </select>
+          </div>
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Время сотворения</div>
+            <input id="cf-cast" type="text" placeholder="1 действие" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">
+          </div>
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Дистанция</div>
+            <input id="cf-range" type="text" placeholder="60 фт" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">
+          </div>
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Компоненты</div>
+            <input id="cf-comp" type="text" placeholder="В, С, М" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">
+          </div>
+          <div>
+            <div class="stat-label" style="margin-bottom:5px">Длительность</div>
+            <input id="cf-dur" type="text" placeholder="Мгновенно" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:7px 10px;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:16px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text2);font-size:14px">
+            <input type="checkbox" id="cf-conc" style="accent-color:var(--gold)"> Концентрация
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text2);font-size:14px">
+            <input type="checkbox" id="cf-ritual" style="accent-color:var(--gold)"> Ритуал
+          </label>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <div class="stat-label" style="margin-bottom:5px">Доступно классам</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px" id="cf-classes">
+            <label class="cf-class-chip" data-cls="Волшебник">Волшебник</label>
+            <label class="cf-class-chip" data-cls="Чародей">Чародей</label>
+            <label class="cf-class-chip" data-cls="Жрец">Жрец</label>
+            <label class="cf-class-chip" data-cls="Друид">Друид</label>
+            <label class="cf-class-chip" data-cls="Бард">Бард</label>
+            <label class="cf-class-chip" data-cls="Паладин">Паладин</label>
+            <label class="cf-class-chip" data-cls="Следопыт">Следопыт</label>
+            <label class="cf-class-chip" data-cls="Колдун">Колдун</label>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <div class="stat-label" style="margin-bottom:5px">Описание *</div>
+          <textarea id="cf-desc" rows="5" placeholder="Опишите эффект заклинания..." style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px;padding:8px 10px;outline:none;resize:vertical;line-height:1.6" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <button class="detail-add-btn" style="flex:1" onclick="saveCustomSpell()" id="cf-save-btn">✦ Сохранить заклинание</button>
+          <button class="detail-add-btn remove" style="flex:0;white-space:nowrap;display:none" id="cf-delete-btn" onclick="deleteCustomSpell()">Удалить</button>
+        </div>
+        <div id="cf-error" style="color:var(--red2);font-size:13px;margin-top:8px;display:none">Заполните обязательные поля: название и описание</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <header>
     <div class="logo">
       <span class="logo-title">Grimoire</span>
@@ -945,6 +1061,21 @@
       <button class="chip" data-school="Некромантия" onclick="filterSchool('Некромантия', this)">Некромантия</button>
       <button class="chip" data-school="Очарование" onclick="filterSchool('Очарование', this)">Очарование</button>
     </div>
+    <div class="divider-v" style="height:20px"></div>
+    <span class="filter-label">Класс:</span>
+    <div class="filter-chips" id="class-filters">
+      <button class="chip active" data-class="all" onclick="filterClass('all', this)">Все</button>
+      <button class="chip" data-class="Волшебник" onclick="filterClass('Волшебник', this)">Волшебник</button>
+      <button class="chip" data-class="Чародей" onclick="filterClass('Чародей', this)">Чародей</button>
+      <button class="chip" data-class="Жрец" onclick="filterClass('Жрец', this)">Жрец</button>
+      <button class="chip" data-class="Друид" onclick="filterClass('Друид', this)">Друид</button>
+      <button class="chip" data-class="Бард" onclick="filterClass('Бард', this)">Бард</button>
+      <button class="chip" data-class="Паладин" onclick="filterClass('Паладин', this)">Паладин</button>
+      <button class="chip" data-class="Следопыт" onclick="filterClass('Следопыт', this)">Следопыт</button>
+      <button class="chip" data-class="Колдун" onclick="filterClass('Колдун', this)">Колдун</button>
+    </div>
+    <div class="divider-v" style="height:20px"></div>
+    <button class="btn btn-ghost" style="font-size:12px;padding:6px 14px" onclick="openCustomSpellForm()">✦ Своё заклинание</button>
   </div>
 
   <div class="layout">
@@ -1099,31 +1230,41 @@ const SPELLS = [
 // ============================================================
 // STATE
 // ============================================================
-let filteredSpells = [...SPELLS];
+let filteredSpells = [];
 let activeLevel = 'all';
 let activeSchool = 'all';
+let activeClass = 'all';
 let searchQuery = '';
 let selectedSpell = null;
 let spellBook = JSON.parse(localStorage.getItem('dnd-spellbook') || '[]');
+let customSpells = JSON.parse(localStorage.getItem('dnd-custom-spells') || '[]');
 
 function saveBook() {
   localStorage.setItem('dnd-spellbook', JSON.stringify(spellBook));
+}
+function saveCustomSpells() {
+  localStorage.setItem('dnd-custom-spells', JSON.stringify(customSpells));
+}
+
+function allSpells() {
+  return SPELLS.concat(customSpells);
 }
 
 // ============================================================
 // FILTER & RENDER
 // ============================================================
 function applyFilters() {
-  filteredSpells = SPELLS.filter(s => {
+  filteredSpells = allSpells().filter(s => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q ||
       s.name.toLowerCase().includes(q) ||
-      s.en.toLowerCase().includes(q) ||
+      (s.en||'').toLowerCase().includes(q) ||
       s.school.toLowerCase().includes(q) ||
       s.classes.some(c => c.toLowerCase().includes(q));
     const matchLevel = activeLevel === 'all' || String(s.level) === activeLevel;
     const matchSchool = activeSchool === 'all' || s.school === activeSchool;
-    return matchSearch && matchLevel && matchSchool;
+    const matchClass = activeClass === 'all' || s.classes.includes(activeClass);
+    return matchSearch && matchLevel && matchSchool && matchClass;
   });
   renderSpellList();
 }
@@ -1131,10 +1272,10 @@ function applyFilters() {
 function renderSpellList() {
   const container = document.getElementById('spell-list');
   const count = document.getElementById('spell-count');
-  count.textContent = `Найдено заклинаний: ${filteredSpells.length} из ${SPELLS.length}`;
+  count.textContent = `Найдено заклинаний: ${filteredSpells.length} из ${allSpells().length}`;
 
   if (filteredSpells.length === 0) {
-    container.innerHTML = `<div class="spell-count"></div><div class="no-results">✦ Заклинаний не найдено ✦</div>`;
+    container.innerHTML = `<div class="spell-count" id="spell-count">Найдено заклинаний: 0 из ${allSpells().length}</div><div class="no-results">✦ Заклинаний не найдено ✦</div>`;
     return;
   }
 
@@ -1145,7 +1286,7 @@ function renderSpellList() {
     grouped[s.level].push(s);
   });
 
-  let html = `<div class="spell-count" id="spell-count">Найдено заклинаний: ${filteredSpells.length} из ${SPELLS.length}</div>`;
+  let html = `<div class="spell-count" id="spell-count">Найдено заклинаний: ${filteredSpells.length} из ${allSpells().length}</div>`;
 
   Object.keys(grouped).sort((a,b) => +a - +b).forEach(level => {
     const levelName = level == 0 ? 'Заговоры' : `${level} уровень`;
@@ -1155,20 +1296,22 @@ function renderSpellList() {
       const inBook = spellBook.includes(s.id);
       const active = selectedSpell && selectedSpell.id === s.id ? 'active' : '';
       const schoolClass = 'school-' + schoolToEn(s.school);
+      const isCustom = s.custom ? '<span style="font-size:10px;background:rgba(100,180,100,0.15);color:#70b870;border:1px solid rgba(80,160,80,0.3);border-radius:3px;padding:1px 5px;font-family:Cinzel,serif;letter-spacing:.5px;margin-left:4px">Своё</span>' : '';
       html += `
       <div class="spell-item ${active} ${inBook ? 'in-book' : ''}" onclick="selectSpell(${s.id})">
         <div class="spell-level-badge ${level == 0 ? 'cantrip' : ''}">${level == 0 ? '◐' : level}</div>
         <div class="spell-info">
-          <div class="spell-name">${s.name}</div>
-          <div class="spell-name-en">${s.en}</div>
+          <div class="spell-name">${s.name}${isCustom}</div>
+          <div class="spell-name-en">${s.en||''}</div>
           <div class="spell-meta">
             <span class="tag ${schoolClass}">${s.school}</span>
             ${s.concentration ? '<span class="conc-tag">К</span>' : ''}
             ${s.ritual ? '<span class="ritual-tag">Р</span>' : ''}
-            <span class="tag">${s.castTime}</span>
+            <span class="tag">${s.castTime||''}</span>
           </div>
         </div>
         <div class="spell-actions">
+          ${s.custom ? `<button class="btn-icon" onclick="editCustomSpell(event,${s.id})" title="Редактировать" style="font-size:12px">✎</button>` : ''}
           <button class="btn-icon ${inBook ? 'added' : ''}" onclick="toggleBook(event, ${s.id})" title="${inBook ? 'Убрать из книги' : 'В книгу'}">
             ${inBook ? '★' : '☆'}
           </button>
@@ -1196,7 +1339,12 @@ function schoolToEn(school) {
 }
 
 function selectSpell(id) {
-  selectedSpell = SPELLS.find(s => s.id === id);
+  // On mobile (detail panel hidden), open modal directly
+  if (window.innerWidth <= 768) {
+    openSpellModal(id);
+    return;
+  }
+  selectedSpell = allSpells().find(s => s.id === id);
   renderSpellList();
   renderDetail();
 }
@@ -1211,47 +1359,41 @@ function renderDetail() {
     return;
   }
   const s = selectedSpell;
+  panel.innerHTML = spellDetailHTML(s, false);
+}
+
+function spellDetailHTML(s, inModal) {
   const inBook = spellBook.includes(s.id);
   const schoolClass = 'school-' + schoolToEn(s.school);
   const levelText = s.level === 0 ? 'Заговор' : `Заклинание ${s.level} уровня`;
+  const customBadge = s.custom ? '<span style="font-size:10px;background:rgba(100,180,100,0.15);color:#70b870;border:1px solid rgba(80,160,80,0.3);border-radius:3px;padding:2px 7px;font-family:Cinzel,serif">Своё</span>' : '';
 
-  panel.innerHTML = `
-    <div class="detail-content">
+  return `<div class="detail-content">
       <div class="detail-level-school">
         <span class="detail-level">${levelText}</span>
         <span class="tag ${schoolClass}">${s.school}</span>
         ${s.concentration ? '<span class="conc-tag">Концентрация</span>' : ''}
         ${s.ritual ? '<span class="ritual-tag">Ритуал</span>' : ''}
+        ${customBadge}
       </div>
       <div class="detail-name">${s.name}</div>
-      <div class="detail-name-en">${s.en}</div>
+      ${s.en ? `<div class="detail-name-en">${s.en}</div>` : ''}
       <div class="detail-divider"></div>
       <div class="detail-stats">
-        <div class="stat-item">
-          <div class="stat-label">Время сотворения</div>
-          <div class="stat-value">${s.castTime}</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Дистанция</div>
-          <div class="stat-value">${s.range}</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Компоненты</div>
-          <div class="stat-value">${s.components}</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Длительность</div>
-          <div class="stat-value">${s.duration}</div>
-        </div>
+        <div class="stat-item"><div class="stat-label">Время сотворения</div><div class="stat-value">${s.castTime||'—'}</div></div>
+        <div class="stat-item"><div class="stat-label">Дистанция</div><div class="stat-value">${s.range||'—'}</div></div>
+        <div class="stat-item"><div class="stat-label">Компоненты</div><div class="stat-value">${s.components||'—'}</div></div>
+        <div class="stat-item"><div class="stat-label">Длительность</div><div class="stat-value">${s.duration||'—'}</div></div>
       </div>
       <div class="detail-divider"></div>
       <div class="detail-desc"><p>${s.desc}</p></div>
-      <div class="detail-tags">
-        ${s.classes.map(c => `<span class="tag">${c}</span>`).join('')}
+      <div class="detail-tags">${s.classes.map(c => `<span class="tag">${c}</span>`).join('')}</div>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="detail-add-btn ${inBook ? 'remove' : ''}" style="flex:1" onclick="${inModal ? `toggleBookModal(event,${s.id})` : `toggleBook(event,${s.id})`}">
+          ${inBook ? '★ Убрать из книги' : '☆ Добавить в книгу'}
+        </button>
+        ${s.custom && inModal ? `<button class="detail-add-btn" style="flex:0;white-space:nowrap;border-color:var(--text3);color:var(--text3)" onclick="closeSpellModal();editCustomSpell(event,${s.id})">✎ Изменить</button>` : ''}
       </div>
-      <button class="detail-add-btn ${inBook ? 'remove' : ''}" onclick="toggleBook(event, ${s.id})">
-        ${inBook ? '★ Убрать из книги' : '☆ Добавить в книгу'}
-      </button>
     </div>`;
 }
 
@@ -1267,6 +1409,23 @@ function toggleBook(e, id) {
   renderSpellList();
   renderDetail();
   renderBook();
+}
+
+function toggleBookModal(e, id) {
+  e.stopPropagation();
+  if (spellBook.includes(id)) {
+    spellBook = spellBook.filter(x => x !== id);
+  } else {
+    spellBook.push(id);
+  }
+  saveBook();
+  document.getElementById('book-count').textContent = spellBook.length;
+  renderSpellList();
+  renderDetail();
+  renderBook();
+  // Refresh modal button
+  const s = allSpells().find(sp => sp.id === id);
+  if (s) openSpellModal(id);
 }
 
 function clearBook() {
@@ -1290,6 +1449,13 @@ function filterLevel(level, btn) {
 function filterSchool(school, btn) {
   activeSchool = school;
   document.querySelectorAll('#school-filters .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function filterClass(cls, btn) {
+  activeClass = cls;
+  document.querySelectorAll('#class-filters .chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
   applyFilters();
 }
@@ -1323,7 +1489,7 @@ function renderBook() {
     return;
   }
 
-  const bookSpells = SPELLS.filter(s => spellBook.includes(s.id)).sort((a,b) => a.level - b.level);
+  const bookSpells = allSpells().filter(s => spellBook.includes(s.id)).sort((a,b) => a.level - b.level);
 
   const grouped = {};
   bookSpells.forEach(s => {
@@ -1339,17 +1505,18 @@ function renderBook() {
       <div class="book-grid">`;
     grouped[level].forEach(s => {
       const schoolClass = 'school-' + schoolToEn(s.school);
+      const customBadge = s.custom ? '<span style="font-size:10px;background:rgba(100,180,100,0.15);color:#70b870;border:1px solid rgba(80,160,80,0.3);border-radius:3px;padding:1px 5px;font-family:Cinzel,serif;margin-left:4px">Своё</span>' : '';
       html += `
         <div class="book-card" onclick="openSpellModal(${s.id})">
           <button class="book-card-remove" onclick="event.stopPropagation();toggleBook(event,${s.id})">✕</button>
           <div class="book-card-level">${level == 0 ? 'Заговор' : level + ' уровень'}</div>
-          <div class="book-card-name">${s.name}</div>
-          <div class="book-card-en">${s.en}</div>
+          <div class="book-card-name">${s.name}${customBadge}</div>
+          ${s.en ? `<div class="book-card-en">${s.en}</div>` : ''}
           <div class="book-card-tags">
             <span class="tag ${schoolClass}">${s.school}</span>
             ${s.concentration ? '<span class="conc-tag">К</span>' : ''}
             ${s.ritual ? '<span class="ritual-tag">Р</span>' : ''}
-            <span class="tag" style="font-size:11px">${s.castTime}</span>
+            ${s.castTime ? `<span class="tag" style="font-size:11px">${s.castTime}</span>` : ''}
           </div>
           <div style="margin-top:10px;font-size:13px;color:var(--text3);line-height:1.5;">${s.desc.substring(0,100)}...</div>
         </div>`;
@@ -1361,54 +1528,15 @@ function renderBook() {
 }
 
 function openSpellModal(id) {
-  const s = SPELLS.find(sp => sp.id === id);
+  const s = allSpells().find(sp => sp.id === id);
   if (!s) return;
-  const inBook = spellBook.includes(s.id);
-  const schoolClass = 'school-' + schoolToEn(s.school);
-  const levelText = s.level === 0 ? 'Заговор' : `Заклинание ${s.level} уровня`;
 
   const modal = document.getElementById('spell-modal');
   modal.innerHTML = `
     <div class="modal-overlay" onclick="closeModal(event)">
       <div class="modal-box" onclick="event.stopPropagation()">
         <div class="modal-close"><button onclick="closeSpellModal()" title="Закрыть">✕</button></div>
-        <div class="detail-content">
-          <div class="detail-level-school">
-            <span class="detail-level">${levelText}</span>
-            <span class="tag ${schoolClass}">${s.school}</span>
-            ${s.concentration ? '<span class="conc-tag">Концентрация</span>' : ''}
-            ${s.ritual ? '<span class="ritual-tag">Ритуал</span>' : ''}
-          </div>
-          <div class="detail-name">${s.name}</div>
-          <div class="detail-name-en">${s.en}</div>
-          <div class="detail-divider"></div>
-          <div class="detail-stats">
-            <div class="stat-item">
-              <div class="stat-label">Время сотворения</div>
-              <div class="stat-value">${s.castTime}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Дистанция</div>
-              <div class="stat-value">${s.range}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Компоненты</div>
-              <div class="stat-value">${s.components}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">Длительность</div>
-              <div class="stat-value">${s.duration}</div>
-            </div>
-          </div>
-          <div class="detail-divider"></div>
-          <div class="detail-desc"><p>${s.desc}</p></div>
-          <div class="detail-tags">
-            ${s.classes.map(c => `<span class="tag">${c}</span>`).join('')}
-          </div>
-          <button class="detail-add-btn remove" onclick="toggleBook(event, ${s.id}); closeSpellModal()">
-            ✕ Убрать из книги
-          </button>
-        </div>
+        ${spellDetailHTML(s, true)}
       </div>
     </div>`;
   modal.style.display = 'block';
@@ -1502,6 +1630,137 @@ function restoreAllSlots() {
   slotData.forEach(s => s.used = 0);
   saveSlots();
   renderSlots();
+}
+
+// ============================================================
+// CUSTOM SPELLS
+// ============================================================
+let editingCustomId = null;
+
+function openCustomSpellForm(editId) {
+  editingCustomId = editId || null;
+  const modal = document.getElementById('custom-spell-modal');
+  const titleEl = document.getElementById('custom-form-title');
+  const deleteBtn = document.getElementById('cf-delete-btn');
+  const saveBtn = document.getElementById('cf-save-btn');
+
+  // Reset form
+  document.getElementById('cf-name').value = '';
+  document.getElementById('cf-name-en').value = '';
+  document.getElementById('cf-level').value = '0';
+  document.getElementById('cf-school').value = 'Воплощение';
+  document.getElementById('cf-cast').value = '';
+  document.getElementById('cf-range').value = '';
+  document.getElementById('cf-comp').value = '';
+  document.getElementById('cf-dur').value = '';
+  document.getElementById('cf-desc').value = '';
+  document.getElementById('cf-conc').checked = false;
+  document.getElementById('cf-ritual').checked = false;
+  document.getElementById('cf-error').style.display = 'none';
+  document.querySelectorAll('.cf-class-chip').forEach(c => c.classList.remove('selected'));
+
+  if (editId) {
+    const s = customSpells.find(x => x.id === editId);
+    if (s) {
+      titleEl.textContent = 'Редактировать заклинание';
+      document.getElementById('cf-name').value = s.name;
+      document.getElementById('cf-name-en').value = s.en || '';
+      document.getElementById('cf-level').value = s.level;
+      document.getElementById('cf-school').value = s.school;
+      document.getElementById('cf-cast').value = s.castTime || '';
+      document.getElementById('cf-range').value = s.range || '';
+      document.getElementById('cf-comp').value = s.components || '';
+      document.getElementById('cf-dur').value = s.duration || '';
+      document.getElementById('cf-desc').value = s.desc;
+      document.getElementById('cf-conc').checked = s.concentration;
+      document.getElementById('cf-ritual').checked = s.ritual;
+      s.classes.forEach(cls => {
+        const chip = document.querySelector(`.cf-class-chip[data-cls="${cls}"]`);
+        if (chip) chip.classList.add('selected');
+      });
+      deleteBtn.style.display = 'block';
+    }
+  } else {
+    titleEl.textContent = 'Новое заклинание';
+    deleteBtn.style.display = 'none';
+  }
+
+  // Attach class chip toggles
+  document.querySelectorAll('.cf-class-chip').forEach(chip => {
+    chip.onclick = () => chip.classList.toggle('selected');
+  });
+
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCustomForm(e) {
+  if (e.target === e.currentTarget) closeCustomSpellModal();
+}
+
+function closeCustomSpellModal() {
+  document.getElementById('custom-spell-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  editingCustomId = null;
+}
+
+function saveCustomSpell() {
+  const name = document.getElementById('cf-name').value.trim();
+  const desc = document.getElementById('cf-desc').value.trim();
+  if (!name || !desc) {
+    document.getElementById('cf-error').style.display = 'block';
+    return;
+  }
+  document.getElementById('cf-error').style.display = 'none';
+
+  const selectedClasses = [...document.querySelectorAll('.cf-class-chip.selected')].map(c => c.dataset.cls);
+
+  const spell = {
+    id: editingCustomId || ('custom_' + Date.now()),
+    custom: true,
+    name,
+    en: document.getElementById('cf-name-en').value.trim(),
+    level: parseInt(document.getElementById('cf-level').value),
+    school: document.getElementById('cf-school').value,
+    castTime: document.getElementById('cf-cast').value.trim() || '1 действие',
+    range: document.getElementById('cf-range').value.trim() || '—',
+    components: document.getElementById('cf-comp').value.trim() || '—',
+    duration: document.getElementById('cf-dur').value.trim() || 'Мгновенно',
+    concentration: document.getElementById('cf-conc').checked,
+    ritual: document.getElementById('cf-ritual').checked,
+    classes: selectedClasses.length ? selectedClasses : ['Все классы'],
+    desc,
+  };
+
+  if (editingCustomId) {
+    const idx = customSpells.findIndex(x => x.id === editingCustomId);
+    if (idx !== -1) customSpells[idx] = spell;
+  } else {
+    customSpells.push(spell);
+  }
+
+  saveCustomSpells();
+  closeCustomSpellModal();
+  applyFilters();
+  renderBook();
+}
+
+function deleteCustomSpell() {
+  if (!editingCustomId) return;
+  if (!confirm('Удалить это заклинание?')) return;
+  customSpells = customSpells.filter(x => x.id !== editingCustomId);
+  spellBook = spellBook.filter(x => x !== editingCustomId);
+  saveCustomSpells();
+  saveBook();
+  document.getElementById('book-count').textContent = spellBook.length;
+  closeCustomSpellModal();
+  applyFilters();
+  renderBook();
+}
+
+function editCustomSpell(e, id) {
+  e.stopPropagation();
+  openCustomSpellForm(id);
 }
 
 // ============================================================
